@@ -1,0 +1,159 @@
+/* App.css - Terminal and Bvim Styling */
+
+/* Terminal cursor animation */
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 18px;
+  background-color: #00ff00;
+  animation: blink 1s infinite;
+  margin-left: 2px;
+}
+
+/* Custom scrollbar for terminal */
+.terminal-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-container::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.terminal-container::-webkit-scrollbar-thumb {
+  background: #1a5fb4;
+  border-radius: 4px;
+}
+
+.terminal-container::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Bvim scrollbar */
+.bvim-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.bvim-content::-webkit-scrollbar-track {
+  background: #16161e;
+}
+
+.bvim-content::-webkit-scrollbar-thumb {
+  background: #3b4261;
+  border-radius: 5px;
+}
+
+.bvim-content::-webkit-scrollbar-thumb:hover {
+  background: #565f89;
+}
+
+/* Input styling to blend with terminal */
+input.terminal-input {
+  caret-color: #00ff00;
+  font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+input.terminal-input::selection {
+  background-color: #1a5fb4;
+  color: #ffffff;
+}
+
+/* Text selection colors */
+::selection {
+  background-color: #1a5fb4;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #1a5fb4;
+  color: #ffffff;
+}
+
+/* Prevent text selection on line numbers */
+.line-numbers {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+/* Smooth transitions for tab switching */
+.tab-button {
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background-color: rgba(26, 27, 38, 0.5);
+}
+
+/* Terminal prompt styling */
+.terminal-prompt {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Hide default input appearance */
+input:focus {
+  outline: none;
+}
+
+/* Kali terminal green text glow effect (subtle) */
+.text-glow-green {
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+/* Section content spacing */
+.section-content {
+  line-height: 1.8;
+}
+
+.section-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.section-content li {
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.section-content li:before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: #00ff00;
+}
+
+/* TUI navbar buttons */
+.tui-nav button {
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+/* Active section glow */
+.section-content {
+  animation: fadeInUp 0.2s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

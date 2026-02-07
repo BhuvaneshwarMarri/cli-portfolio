@@ -1,0 +1,93 @@
+/* index.css - Base styles and font imports */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #0a0a0a;
+  color: #c0c0c0;
+  overflow-x: hidden;
+}
+
+code {
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Remove default button styles */
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Remove default input styles */
+input {
+  font-family: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom text selection */
+::selection {
+  background-color: #1a5fb4;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #1a5fb4;
+  color: #ffffff;
+}
+
+/* Prevent FOUC (Flash of Unstyled Content) */
+.terminal-container,
+.bvim-container {
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Accessibility - Focus indicators */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print styles - hide on print */
+@media print {
+  .terminal-container,
+  .bvim-container {
+    display: none;
+  }
+}
+::selection {
+  background: #1e40af;
+  color: white;
+}

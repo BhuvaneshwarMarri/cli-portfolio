@@ -1,0 +1,237 @@
+/* Terminal Container */
+.terminal {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  padding: 2rem;
+  min-height: 100vh;
+  cursor: text;
+  overflow-y: auto;
+  position: relative;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* Banner */
+.banner {
+  color: #89b4fa;
+  margin-bottom: 2rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  position: relative;
+  opacity: 0.9;
+}
+
+/* History Lines */
+.history-line {
+  margin: 0.2rem 0;
+  position: relative;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Prompt */
+.prompt {
+  margin-top: 1.2rem;
+  position: relative;
+}
+
+.prompt-line {
+  margin: 0.2rem 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Color Classes - Professional Developer Theme */
+.cyan {
+  color: #89dceb;
+}
+
+.green {
+  color: #a6e3a1;
+}
+
+.blue {
+  color: #89b4fa;
+}
+
+.red {
+  color: #f38ba8;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+/* Input */
+.input-text {
+  color: #cdd6f4;
+  margin-left: 0.3rem;
+}
+
+/* Cursor - Clean and Simple */
+.cursor {
+  display: inline-block;
+  width: 0.55rem;
+  height: 1.15rem;
+  background-color: #89b4fa;
+  margin-left: 0.2rem;
+  vertical-align: text-bottom;
+  transition: opacity 0.1s ease;
+}
+
+/* Hidden Input */
+.hidden-input {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+/* Selection - Professional Blue */
+::selection {
+  background-color: #45475a;
+  color: #cdd6f4;
+}
+
+::-moz-selection {
+  background-color: #45475a;
+  color: #cdd6f4;
+}
+
+/* Scrollbar - Minimal and Clean */
+.terminal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal::-webkit-scrollbar-track {
+  background: #181825;
+}
+
+.terminal::-webkit-scrollbar-thumb {
+  background: #45475a;
+  border-radius: 4px;
+}
+
+.terminal::-webkit-scrollbar-thumb:hover {
+  background: #585b70;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .terminal {
+    padding: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .banner {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .terminal {
+    padding: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .banner {
+    font-size: 0.55rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .history-line,
+  .cursor {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Focus state - Subtle professional feedback */
+.terminal:focus-within {
+  background: #1e1e2e;
+  outline: none;
+}
+
+/* Clean hover effect */
+.terminal:hover {
+  background: #1e1e2e;
+}
+
+/* Dark mode optimization */
+@media (prefers-color-scheme: dark) {
+  .terminal {
+    background: #1e1e2e;
+  }
+}
+
+/* Light mode alternative (optional) */
+@media (prefers-color-scheme: light) {
+  .terminal {
+    background: #eff1f5;
+    color: #4c4f69;
+  }
+
+  .banner {
+    color: #1e66f5;
+  }
+
+  .cyan {
+    color: #179299;
+  }
+
+  .green {
+    color: #40a02b;
+  }
+
+  .blue {
+    color: #1e66f5;
+  }
+
+  .red {
+    color: #d20f39;
+  }
+
+  .input-text {
+    color: #4c4f69;
+  }
+
+  .cursor {
+    background-color: #1e66f5;
+  }
+
+  ::selection {
+    background-color: #dce0e8;
+    color: #4c4f69;
+  }
+
+  .terminal::-webkit-scrollbar-track {
+    background: #e6e9ef;
+  }
+
+  .terminal::-webkit-scrollbar-thumb {
+    background: #9ca0b0;
+  }
+
+  .terminal::-webkit-scrollbar-thumb:hover {
+    background: #7c7f93;
+  }
+}
+.history-line {
+  white-space: pre;
+  font-variant-ligatures: none;
+}

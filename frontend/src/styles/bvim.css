@@ -1,0 +1,154 @@
+/* ===============================
+   BVIM – Matched with Terminal UI
+   =============================== */
+
+.bvim {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* ---------- Navigation Bar ---------- */
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  background: #181825;
+  border-bottom: 1px solid #313244;
+}
+
+.nav button {
+  color: #a6adc8;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav button:hover {
+  background: #313244;
+  color: #cdd6f4;
+}
+
+.nav button.active {
+  background: #89b4fa;
+  color: #1e1e2e;
+  font-weight: 600;
+}
+
+/* ---------- Content Area ---------- */
+
+.content {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Headings inside content */
+.title {
+  color: #89dceb;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+/* ---------- Vim Command Line ---------- */
+
+.vim-command {
+  background: #181825;
+  color: #cdd6f4;
+  padding: 0.4rem 0.8rem;
+  font-family: inherit;
+  border-top: 1px solid #313244;
+  font-size: 0.85rem;
+}
+
+/* ---------- Status Line ---------- */
+
+.status {
+  background: #181825;
+  border-top: 1px solid #313244;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+  color: #a6adc8;
+}
+
+/* ---------- Scrollbar (Same as Terminal) ---------- */
+
+.bvim::-webkit-scrollbar,
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bvim::-webkit-scrollbar-track,
+.content::-webkit-scrollbar-track {
+  background: #181825;
+}
+
+.bvim::-webkit-scrollbar-thumb,
+.content::-webkit-scrollbar-thumb {
+  background: #45475a;
+  border-radius: 4px;
+}
+
+.bvim::-webkit-scrollbar-thumb:hover,
+.content::-webkit-scrollbar-thumb:hover {
+  background: #585b70;
+}
+
+/* ---------- Selection ---------- */
+
+.bvim ::selection {
+  background-color: #45475a;
+  color: #cdd6f4;
+}
+
+.bvim ::-moz-selection {
+  background-color: #45475a;
+  color: #cdd6f4;
+}
+
+/* ---------- Reduced Motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    animation: none;
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 768px) {
+  .content {
+    padding: 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 1rem;
+    font-size: 0.85rem;
+  }
+}
