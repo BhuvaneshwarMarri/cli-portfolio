@@ -15,32 +15,38 @@ export type Section =
   | "experience"
   | "contact";
 
-export const sections: Record<
+export const sectionMetadata: Record<
   Section,
-  { icon: any; content: string }
+  { icon: any; title: string; description: string }
 > = {
   home: {
     icon: User,
-    content: "Welcome to my TUI portfolio.",
+    title: "About Me",
+    description: "Welcome to my TUI portfolio.",
   },
   education: {
     icon: GraduationCap,
-    content: "B.Tech in Computer Science",
+    title: "Education",
+    description: "My academic background and achievements.",
   },
   skills: {
     icon: Code,
-    content: "React, TypeScript, Linux",
+    title: "Skills",
+    description: "Technologies and tools I work with.",
   },
   projects: {
     icon: Folder,
-    content: "Terminal Portfolio, Dev Tools",
+    title: "Projects",
+    description: "Things I've built and contributed to.",
   },
   experience: {
     icon: Briefcase,
-    content: "Full Stack Developer",
+    title: "Experience",
+    description: "My professional journey.",
   },
   contact: {
     icon: Mail,
-    content: "bhuvan@example.com",
+    title: "Contact",
+    description: "Let's connect!",
   },
 };

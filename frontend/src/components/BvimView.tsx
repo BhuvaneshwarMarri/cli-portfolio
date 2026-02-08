@@ -1,12 +1,36 @@
 import { useEffect, useState } from "react";
-import { sections } from "./sections";
-import type { Section } from "./sections";
+import { useNavigate, useLocation } from "react-router-dom";
+import AppRouter from "../router/AppRouter";
 import "../styles/bvim.css";
 
+type Section = "home" | "education" | "skills" | "projects" | "experience" | "contact";
+
 export default function BvimView({ onExit }: { onExit: () => void }) {
-  const keys = Object.keys(sections) as Section[];
-  const [active, setActive] = useState<Section>("home");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const sections: Section[] = ["home", "education", "skills", "projects", "experience", "contact"];
+  
+  // Determine active section from URL
+  const getCurrentSection = (): Section => {
+    const path = location.pathname.slice(1) as Section;
+    return sections.includes(path) ? path : "home";
+  };
+
+  const [active, setActive] = useState<Section>(getCurrentSection());
   const [cmdBuffer, setCmdBuffer] = useState("");
+
+  // Update active section when URL changes
+  useEffect(() => {
+    const currentSection = getCurrentSection();
+    setActive(currentSection);
+  }, [location.pathname]);
+
+  // Navigate when active section changes
+  useEffect(() => {
+    if (location.pathname !== `/${active}`) {
+      navigate(`/${active}`);
+    }
+  }, [active, navigate]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -44,31 +68,36 @@ export default function BvimView({ onExit }: { onExit: () => void }) {
         }
       }
 
-      const i = keys.indexOf(active);
-      if (e.key === "l") setActive(keys[(i + 1) % keys.length]);
-      if (e.key === "h")
-        setActive(keys[(i - 1 + keys.length) % keys.length]);
+      const i = sections.indexOf(active);
+      if (e.key === "l" || e.key === "ArrowRight") {
+        setActive(sections[(i + 1) % sections.length]);
+      }
+      if (e.key === "h" || e.key === "ArrowLeft") {
+        setActive(sections[(i - 1 + sections.length) % sections.length]);
+      }
     }
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [active, cmdBuffer, onExit]);
+  }, [active, cmdBuffer, onExit, sections]);
 
   return (
     <div className="bvim">
       <div className="nav">
-        {keys.map((k) => (
+        {sections.map((section) => (
           <button
-            key={k}
-            className={k === active ? "active" : ""}
-            onClick={() => setActive(k)}
+            key={section}
+            className={section === active ? "active" : ""}
+            onClick={() => setActive(section)}
           >
-            {k}
+            {section}
           </button>
         ))}
       </div>
 
-      <div className="content">{sections[active].content}</div>
+      <div className="content">
+        <AppRouter />
+      </div>
 
       {cmdBuffer && <div className="vim-command">{cmdBuffer}</div>}
     </div>

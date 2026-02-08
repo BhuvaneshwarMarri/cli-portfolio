@@ -6,7 +6,8 @@ type Props = {
     setHistory: React.Dispatch<React.SetStateAction<string[]>>;
     input: string;
     setInput: React.Dispatch<React.SetStateAction<string>>;
-    onEnterBvim: () => void;
+    onEnterBvim: (section?: string) => void;
+    onNavigate: (section: string) => void;
 };
 
 export default function TerminalView({
@@ -15,6 +16,7 @@ export default function TerminalView({
     input,
     setInput,
     onEnterBvim,
+    onNavigate,
 }: Props) {
     const [cursorVisible, setCursorVisible] = useState(true);
     const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -22,17 +24,19 @@ export default function TerminalView({
     const inputRef = useRef<HTMLInputElement>(null);
     const endRef = useRef<HTMLDivElement>(null);
 
-    const banner = `
- ██████╗ ██╗  ██╗██╗   ██╗██╗   ██╗ █████╗ ███╗   ██╗
- ██╔══██╗██║  ██║██║   ██║██║   ██║██╔══██╗████╗  ██║
- ██████╔╝███████║██║   ██║██║   ██║███████║██╔██╗ ██║
- ██╔══██╗██╔══██║██║   ██║╚██╗ ██╔╝██╔══██║██║╚██╗██║
- ██████╔╝██║  ██║╚██████╔╝ ╚████╔╝ ██║  ██║██║ ╚████║
- ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝
- [ Bhuvan's Portfolio ]
+const banner = `
+ ██████╗ ██╗  ██╗██╗   ██╗██╗   ██╗ █████╗ ███╗   ██╗███████╗███████╗██╗  ██╗██╗    ██╗ █████╗ ██████╗ 
+ ██╔══██╗██║  ██║██║   ██║██║   ██║██╔══██╗████╗  ██║██╔════╝██╔════╝██║  ██║██║    ██║██╔══██╗██╔══██╗
+ ██████╔╝███████║██║   ██║██║   ██║███████║██╔██╗ ██║█████╗  ███████╗███████║██║ █╗ ██║███████║██████╔╝
+ ██╔══██╗██╔══██║██║   ██║╚██╗ ██╔╝██╔══██║██║╚██╗██║██╔══╝  ╚════██║██╔══██║██║███╗██║██╔══██║██╔══██╗
+ ██████╔╝██║  ██║╚██████╔╝ ╚████╔╝ ██║  ██║██║ ╚████║███████╗███████║██║  ██║╚███╔███╔╝██║  ██║██║  ██║
+ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+
+ [ Bhuvaneshwar Marri | CLI Portfolio ]
 
  Welcome! Type 'help' to see available commands.
 `;
+
 
     /* Focus on load */
     useEffect(() => {
@@ -208,7 +212,6 @@ export default function TerminalView({
         }
 
         /* Help */
-        /* Help (ASCII box – web safe) */
         if (cmdLower === "help" || cmdLower === "?") {
             setHistory((h) => [
                 ...h,
@@ -250,8 +253,6 @@ export default function TerminalView({
             return;
         }
 
-
-
         /* Section shortcuts */
         if (cmdLower in commandData) {
             const section = commandData[cmdLower as keyof typeof commandData];
@@ -265,6 +266,8 @@ export default function TerminalView({
                 "",
             ]);
             setInput("");
+            // Navigate to the section route
+            onNavigate(cmdLower);
             return;
         }
 
@@ -357,9 +360,9 @@ export default function TerminalView({
             <form onSubmit={runCommand} className="prompt">
                 <div className="prompt-line">
                     <span className="cyan">┌──(</span>
-                    <span className="green bold">bhuvan㉿kali</span>
+                    <span className="green bold">bhuvaneshwar㉿marri</span>
                     <span className="cyan">)-[</span>
-                    <span className="blue">~</span>
+                    <span className="blue">portfolio</span>
                     <span className="cyan">]</span>
                 </div>
 
