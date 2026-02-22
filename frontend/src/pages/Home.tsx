@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import BvimLayout from "../components/BvimLayout";
+import SectionBox from "../components/SectionBox";
 
 export default function Home() {
   const [asciiArt, setAsciiArt] = useState("");
@@ -14,143 +15,274 @@ export default function Home() {
 
   return (
     <BvimLayout>
-      <div style={styles.page}>
-        <div style={styles.nameBlock}>
-          <pre style={styles.namePre}>{`
- ██████╗ ██╗  ██╗██╗   ██╗██╗   ██╗ █████╗ ███╗   ██╗
- ██╔══██╗██║  ██║██║   ██║██║   ██║██╔══██╗████╗  ██║
- ██████╔╝███████║██║   ██║██║   ██║███████║██╔██╗ ██║
- ██╔══██╗██╔══██║██║   ██║╚██╗ ██╔╝██╔══██║██║╚██╗██║
- ██████╔╝██║  ██║╚██████╔╝ ╚████╔╝ ██║  ██║██║ ╚████║
- ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝`}</pre>
-        </div>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        height: "100%",
+        color: "var(--text)",
+        fontFamily: "var(--font-family, 'JetBrains Mono', monospace)",
+      }}>
 
-        <div style={styles.grid}>
-          <div style={styles.infoBlock}>
-            <p style={styles.label}>$ whoami</p>
-            <p style={styles.value}>Bhuvaneshwar Marri</p>
+        {/* ── TOP: ASCII Banner + Character side by side ────────────────── */}
+        <SectionBox title="">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
 
-            <p style={styles.label}>$ role</p>
-            <p style={styles.value}>Full Stack Developer · AI Enthusiast</p>
-
-            <p style={styles.label}>$ location</p>
-            <p style={styles.value}>India</p>
-
-            <p style={styles.label}>$ status</p>
-            <p style={{ ...styles.value, color: "var(--accent2)" }}>
-              ● Open to opportunities
-            </p>
-
-            <p style={styles.label}>$ description</p>
-            <p style={styles.desc}>
-              Passionate about building innovative, elegant solutions at the intersection
-              of software engineering and AI. I love creating tools that feel like magic.
-            </p>
-
-            <div style={styles.linkRow}>
-              <a href="https://github.com/BhuvaneshwarMarri" target="_blank" rel="noopener noreferrer" style={styles.link}>
-                ◈ GitHub
-              </a>
-              <a href="https://linkedin.com/in/bhuvan" target="_blank" rel="noopener noreferrer" style={styles.link}>
-                ◈ LinkedIn
-              </a>
-              <a href="mailto:bhuvan@example.com" style={styles.link}>
-                ◈ Email
-              </a>
+            {/* Left: name + tagline */}
+            <div style={{ flex: 1, overflow: "hidden" }}>
+              <pre style={{
+                color: "var(--accent)",
+                fontSize: "clamp(4px, 0.75vw, 10px)",
+                lineHeight: 1.15,
+                margin: "0 0 10px 0",
+                whiteSpace: "pre",
+                fontFamily: "monospace",
+              }}>{`\
+ ██████╗ ██╗  ██╗██╗   ██╗██╗   ██╗ █████╗ ███╗   ██╗███████╗███████╗██╗  ██╗██╗    ██╗ █████╗ ██████╗ 
+ ██╔══██╗██║  ██║██║   ██║██║   ██║██╔══██╗████╗  ██║██╔════╝██╔════╝██║  ██║██║    ██║██╔══██╗██╔══██╗
+ ██████╔╝███████║██║   ██║██║   ██║███████║██╔██╗ ██║█████╗  ███████╗███████║██║ █╗ ██║███████║██████╔╝
+ ██╔══██╗██╔══██║██║   ██║╚██╗ ██╔╝██╔══██║██║╚██╗██║██╔══╝  ╚════██║██╔══██║██║███╗██║██╔══██║██╔══██╗
+ ██████╔╝██║  ██║╚██████╔╝ ╚████╔╝ ██║  ██║██║ ╚████║███████╗███████║██║  ██║╚███╔███╔╝██║  ██║██║  ██║
+ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝`}
+              </pre>
+              <p style={{ margin: 0, color: "var(--text-dim)", fontSize: "0.82em", letterSpacing: "0.05em" }}>
+                Full Stack Developer &nbsp;·&nbsp; AI Enthusiast &nbsp;·&nbsp; India
+              </p>
             </div>
+
+            {/* Right: ASCII character art */}
+            {asciiArt && (
+              <pre style={{
+                fontSize: "clamp(3px, 0.38vw, 6px)",
+                lineHeight: 0.82,
+                color: "var(--text-dim)",
+                margin: 0,
+                opacity: 0.65,
+                flexShrink: 0,
+                letterSpacing: "-0.5px",
+                fontFamily: "monospace",
+              }}>
+                {asciiArt}
+              </pre>
+            )}
           </div>
+        </SectionBox>
 
-          {asciiArt && (
-            <div style={styles.asciiBlock}>
-              <pre style={styles.asciiPre}>{asciiArt}</pre>
+        {/* ── BOTTOM: Two-column grid ───────────────────────────────────── */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gridTemplateRows: "auto auto",
+          gap: "16px",
+          flex: 1,
+        }}>
+
+          {/* About Me */}
+          <SectionBox title="About Me" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <InfoRow label="whoami"   value="Bhuvaneshwar Marri" active />
+              <InfoRow label="role"     value="Full Stack Developer" />
+              <InfoRow label="focus"    value="AI · Web · Systems" />
+              <InfoRow label="location" value="India" />
+              <InfoRow
+                label="status"
+                value="● Open to opportunities"
+                valueColor="var(--accent2)"
+              />
+              <InfoRow
+                label="bio"
+                value="Passionate about building innovative solutions at the intersection of software engineering and AI."
+              />
             </div>
-          )}
-        </div>
+          </SectionBox>
 
-        <div style={styles.hint}>
-          Type <span style={{ color: "var(--accent)" }}>:theme dracula</span> ·{" "}
-          <span style={{ color: "var(--accent)" }}>:theme nord</span> ·{" "}
-          <span style={{ color: "var(--accent)" }}>:theme gruvbox</span> ·{" "}
-          <span style={{ color: "var(--accent)" }}>:font</span> to customise
+          {/* Links */}
+          <SectionBox title="Links" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+              <LinkRow icon="◈" label="GitHub"
+                href="https://github.com/BhuvaneshwarMarri"
+                val="github.com/BhuvaneshwarMarri"
+                active
+              />
+              <LinkRow icon="⬡" label="LinkedIn"
+                href="https://linkedin.com/in/bhuvan"
+                val="linkedin.com/in/bhuvan"
+              />
+              <LinkRow icon="@" label="Email"
+                href="mailto:bhuvan@example.com"
+                val="bhuvan@example.com"
+              />
+              <LinkRow icon="✦" label="Twitter"
+                href="https://twitter.com/bhuvan"
+                val="@bhuvan"
+              />
+            </div>
+          </SectionBox>
+
+          {/* Quick Stats */}
+          <SectionBox title="Quick Stats" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <StatRow label="Projects"     value="10+"  color="var(--accent)"  />
+              <StatRow label="Experience"   value="2 yr" color="var(--accent2)" />
+              <StatRow label="Stack"        value="Full" color="var(--accent3)" />
+              <StatRow label="Open Source"  value="Yes"  color="var(--accent2)" active />
+              <StatRow label="Coffee / day" value="∞"    color="var(--accent3)" />
+            </div>
+          </SectionBox>
+
+          {/* Tip */}
+          <SectionBox title="Commands" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+              <CmdRow cmd=":theme dracula" desc="switch to Dracula theme" active />
+              <CmdRow cmd=":theme nord"    desc="switch to Nord theme" />
+              <CmdRow cmd=":theme gruvbox" desc="switch to Gruvbox theme" />
+              <CmdRow cmd=":theme tokyo"   desc="switch to Tokyo Night theme" />
+              <CmdRow cmd=":font"          desc="cycle monospace font" />
+              <CmdRow cmd=":font+"         desc="increase font size" />
+              <CmdRow cmd=":font-"         desc="decrease font size" />
+              <CmdRow cmd=":q"             desc="exit bvim" />
+            </div>
+          </SectionBox>
+
         </div>
       </div>
     </BvimLayout>
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  page: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-    color: "var(--text)",
-  },
-  nameBlock: {
-    overflowX: "auto",
-  },
-  namePre: {
-    color: "var(--accent)",
-    fontSize: "clamp(5px, 0.9vw, 11px)",
-    lineHeight: 1.1,
-    margin: 0,
-    whiteSpace: "pre",
-    fontFamily: "inherit",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "1fr auto",
-    gap: "24px",
-    alignItems: "start",
-  },
-  infoBlock: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px",
-  },
-  label: {
-    color: "var(--accent3)",
-    fontSize: "0.8em",
-    margin: "8px 0 2px",
-  },
-  value: {
-    color: "var(--text)",
-    margin: 0,
-    fontWeight: 600,
-  },
-  desc: {
-    color: "var(--text-dim)",
-    margin: "4px 0",
-    lineHeight: 1.6,
-    maxWidth: "480px",
-  },
-  linkRow: {
-    display: "flex",
-    gap: "16px",
-    marginTop: "12px",
-    flexWrap: "wrap",
-  },
-  link: {
-    color: "var(--accent)",
-    textDecoration: "none",
-    borderBottom: "1px dashed var(--border-dim)",
-    paddingBottom: "2px",
-    fontSize: "0.9em",
-  },
-  asciiBlock: {
-    overflow: "hidden",
-    maxWidth: "240px",
-  },
-  asciiPre: {
-    fontSize: "clamp(3px, 0.4vw, 7px)",
-    lineHeight: 0.8,
-    color: "var(--text-dim)",
-    margin: 0,
-    opacity: 0.7,
-  },
-  hint: {
-    borderTop: "1px dashed var(--border-dim)",
-    paddingTop: "12px",
-    color: "var(--text-dim)",
-    fontSize: "0.8em",
-  },
-};
+/* ── Sub-components ─────────────────────────────────────────────────────── */
+
+function InfoRow({
+  label,
+  value,
+  active = false,
+  valueColor,
+}: {
+  label: string;
+  value: string;
+  active?: boolean;
+  valueColor?: string;
+}) {
+  return (
+    <div style={{ display: "flex", gap: "8px", alignItems: "baseline" }}>
+      <span style={{
+        color: "var(--accent3)",
+        fontSize: "0.76em",
+        minWidth: "68px",
+        flexShrink: 0,
+      }}>
+        $ {label}
+      </span>
+      <span style={{
+        color: valueColor ?? (active ? "var(--accent)" : "var(--text)"),
+        fontSize: "0.88em",
+        fontWeight: active ? 700 : 400,
+        lineHeight: 1.5,
+      }}>
+        {active && <span style={{ color: "var(--accent3)" }}>✓ </span>}
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function LinkRow({
+  icon,
+  label,
+  href,
+  val,
+  active = false,
+}: {
+  icon: string;
+  label: string;
+  href: string;
+  val: string;
+  active?: boolean;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <span style={{ color: active ? "var(--accent)" : "var(--accent3)", minWidth: "14px", fontSize: "0.9em" }}>
+        {icon}
+      </span>
+      <span style={{ color: "var(--text-dim)", fontSize: "0.76em", minWidth: "58px", flexShrink: 0 }}>
+        {label}
+      </span>
+      <a
+        href={href}
+        target={href.startsWith("mailto") ? "_self" : "_blank"}
+        rel="noopener noreferrer"
+        style={{
+          color: active ? "var(--accent)" : "var(--text)",
+          fontWeight: active ? 700 : 400,
+          textDecoration: "none",
+          fontSize: "0.86em",
+          borderBottom: `1px dashed ${active ? "var(--accent)" : "var(--border-dim)"}`,
+          paddingBottom: "1px",
+        }}
+      >
+        {val}
+        {active && <span style={{ color: "var(--accent)", marginLeft: "6px" }}>✓</span>}
+      </a>
+    </div>
+  );
+}
+
+function StatRow({
+  label,
+  value,
+  color,
+  active = false,
+}: {
+  label: string;
+  value: string;
+  color: string;
+  active?: boolean;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <span style={{ color: "var(--text-dim)", fontSize: "0.82em", flex: 1 }}>
+        {active && <span style={{ color: "var(--accent2)" }}>✓ </span>}
+        {label}
+      </span>
+      <span style={{
+        color,
+        fontWeight: 700,
+        fontSize: "0.9em",
+        padding: "1px 8px",
+        border: `1px solid ${color}`,
+        borderRadius: "2px",
+        background: `color-mix(in srgb, ${color} 10%, transparent)`,
+      }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function CmdRow({
+  cmd,
+  desc,
+  active = false,
+}: {
+  cmd: string;
+  desc: string;
+  active?: boolean;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+      <span style={{
+        color: active ? "var(--accent)" : "var(--text-dim)",
+        fontWeight: active ? 700 : 400,
+        fontSize: "0.82em",
+        minWidth: "120px",
+        flexShrink: 0,
+      }}>
+        {active && <span style={{ color: "var(--accent3)" }}>✓ </span>}
+        {cmd}
+      </span>
+      <span style={{ color: "var(--text-dim)", fontSize: "0.76em", opacity: 0.7 }}>
+        {desc}
+      </span>
+    </div>
+  );
+}

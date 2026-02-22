@@ -1,76 +1,140 @@
 import BvimLayout from "../components/BvimLayout";
-
-const skillGroups = [
-  {
-    label: "Languages",
-    color: "var(--accent2)",
-    skills: ["Python", "Java", "TypeScript", "JavaScript", "C++", "SQL"],
-  },
-  {
-    label: "Frontend",
-    color: "var(--accent)",
-    skills: ["React", "TypeScript", "Tailwind CSS", "Vite", "Framer Motion"],
-  },
-  {
-    label: "Backend & Tools",
-    color: "var(--accent3)",
-    skills: ["Node.js", "Express", "MongoDB", "PostgreSQL", "Docker", "Git"],
-  },
-  {
-    label: "AI & Systems",
-    color: "var(--cursor)",
-    skills: ["Agentic AI", "LangChain", "Linux", "Bash", "System Design"],
-  },
-];
+import SectionBox from "../components/SectionBox";
 
 export default function Skills() {
   return (
     <BvimLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "var(--text)" }}>
-        <h1 style={{ color: "var(--accent)", margin: 0, fontSize: "1.1em", letterSpacing: "0.08em" }}>
-          λ TECHNICAL SKILLS
-        </h1>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        height: "100%",
+        color: "var(--text)",
+        fontFamily: "var(--font-family, 'JetBrains Mono', monospace)",
+      }}>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px" }}>
-          {skillGroups.map(group => (
-            <div key={group.label} style={{
-              border: "1px solid var(--border-dim)",
-              borderRadius: "4px",
-              padding: "14px",
-              background: "color-mix(in srgb, var(--bg-sidebar) 60%, transparent)",
-            }}>
-              <p style={{ color: group.color, margin: "0 0 10px", fontWeight: 700, fontSize: "0.85em", letterSpacing: "0.1em" }}>
-                ▸ {group.label.toUpperCase()}
+        {/* ── HEADER ─────────────────────────────────────────────────────── */}
+        <SectionBox title="">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+            <div>
+              <pre style={{
+                color: "var(--accent)",
+                fontSize: "clamp(4px, 0.75vw, 10px)",
+                lineHeight: 1.15,
+                margin: "0 0 8px 0",
+                whiteSpace: "pre",
+                fontFamily: "monospace",
+              }}>{`\
+ ███████╗██╗  ██╗██╗██╗     ██╗     ███████╗
+ ██╔════╝██║ ██╔╝██║██║     ██║     ██╔════╝
+ ███████╗█████╔╝ ██║██║     ██║     ███████╗
+ ╚════██║██╔═██╗ ██║██║     ██║     ╚════██║
+ ███████║██║  ██╗██║███████╗███████╗███████║
+ ╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚══════╝`}
+              </pre>
+              <p style={{ margin: 0, color: "var(--text-dim)", fontSize: "0.82em", letterSpacing: "0.05em" }}>
+                Languages &nbsp;·&nbsp; Frameworks &nbsp;·&nbsp; Tools &nbsp;·&nbsp; AI Systems
               </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                {group.skills.map(s => (
-                  <span key={s} style={{
-                    padding: "3px 9px",
-                    border: `1px solid ${group.color}`,
-                    borderRadius: "2px",
-                    fontSize: "0.8em",
-                    color: group.color,
-                    background: `color-mix(in srgb, ${group.color} 10%, transparent)`,
-                  }}>
-                    {s}
-                  </span>
-                ))}
-              </div>
             </div>
-          ))}
-        </div>
-
-        <div style={{ borderTop: "1px dashed var(--border-dim)", paddingTop: "14px" }}>
-          <p style={{ color: "var(--accent)", margin: "0 0 8px", fontSize: "0.85em", fontWeight: 700 }}>▸ CORE COMPETENCIES</p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
-            {["Full-stack web development", "RESTful API design", "Database architecture", "DevOps & CI/CD", "Agentic AI systems", "System design"].map(c => (
-              <p key={c} style={{ margin: 0, color: "var(--text-dim)", fontSize: "0.88em" }}>
-                <span style={{ color: "var(--accent2)" }}>✓ </span>{c}
-              </p>
-            ))}
           </div>
+        </SectionBox>
+
+        {/* ── GRID ───────────────────────────────────────────────────────── */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "16px",
+          flex: 1,
+        }}>
+
+          {/* Languages */}
+          <SectionBox title="Languages" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+              <SkillRow name="Python"     level={92} color="var(--accent2)"  active />
+              <SkillRow name="TypeScript" level={88} color="var(--accent)"  />
+              <SkillRow name="JavaScript" level={85} color="var(--accent)"  />
+              <SkillRow name="Java"       level={75} color="var(--accent3)" />
+              <SkillRow name="C++"        level={65} color="var(--accent3)" />
+              <SkillRow name="SQL"        level={80} color="var(--accent2)" />
+            </div>
+          </SectionBox>
+
+          {/* Frontend */}
+          <SectionBox title="Frontend" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+              <SkillRow name="React"          level={90} color="var(--accent)"  active />
+              <SkillRow name="Tailwind CSS"   level={85} color="var(--accent)"  />
+              <SkillRow name="Vite"           level={82} color="var(--accent2)" />
+              <SkillRow name="Framer Motion"  level={70} color="var(--accent3)" />
+              <SkillRow name="Next.js"        level={72} color="var(--accent)"  />
+            </div>
+          </SectionBox>
+
+          {/* Backend & Tools */}
+          <SectionBox title="Backend & Tools" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+              <SkillRow name="Node.js"     level={85} color="var(--accent2)" active />
+              <SkillRow name="Express"     level={82} color="var(--accent2)" />
+              <SkillRow name="PostgreSQL"  level={78} color="var(--accent)"  />
+              <SkillRow name="MongoDB"     level={75} color="var(--accent2)" />
+              <SkillRow name="Docker"      level={70} color="var(--accent3)" />
+              <SkillRow name="Git"         level={90} color="var(--accent)"  />
+            </div>
+          </SectionBox>
+
+          {/* AI & Systems */}
+          <SectionBox title="AI & Systems" style={{ margin: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+              <SkillRow name="Agentic AI"    level={80} color="var(--accent3)" active />
+              <SkillRow name="LangChain"     level={75} color="var(--accent3)" />
+              <SkillRow name="OpenAI API"    level={82} color="var(--accent)"  />
+              <SkillRow name="Linux / Bash"  level={78} color="var(--accent2)" />
+              <SkillRow name="System Design" level={70} color="var(--accent3)" />
+            </div>
+          </SectionBox>
+
         </div>
       </div>
     </BvimLayout>
+  );
+}
+
+/* ── Skill row with inline progress bar ────────────────────────────────── */
+
+function SkillRow({ name, level, color, active = false }: {
+  name: string; level: number; color: string; active?: boolean;
+}) {
+  const filled = Math.round(level / 10);  // 0–10 blocks
+  const empty  = 10 - filled;
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      {/* Active marker */}
+      <span style={{ color: active ? "var(--accent3)" : "transparent", fontSize: "0.75em", flexShrink: 0 }}>
+        ✓
+      </span>
+
+      {/* Name */}
+      <span style={{
+        color: active ? "var(--accent)" : "var(--text)",
+        fontSize: "0.86em",
+        fontWeight: active ? 700 : 400,
+        minWidth: "110px",
+        flexShrink: 0,
+      }}>
+        {name}
+      </span>
+
+      {/* Progress bar */}
+      <span style={{ color, fontSize: "0.78em", letterSpacing: "1px", fontFamily: "monospace" }}>
+        {"█".repeat(filled)}
+        <span style={{ opacity: 0.2 }}>{"░".repeat(empty)}</span>
+      </span>
+
+      {/* Percentage */}
+      <span style={{ color: "var(--text-dim)", fontSize: "0.75em", marginLeft: "auto", flexShrink: 0 }}>
+        {level}%
+      </span>
+    </div>
   );
 }
