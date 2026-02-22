@@ -9,63 +9,148 @@ export default function Home() {
     fetch("/ascii-art.txt")
       .then((res) => res.text())
       .then((data) => setAsciiArt(data))
-      .catch(err => console.error("Error loading ASCII:", err));
+      .catch(() => {});
   }, []);
 
   return (
     <BvimLayout>
-      <div className="min-h-[80vh] flex items-center px-6 lg:px-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full items-center">
-          
-          {/* LEFT SIDE – TEXT CONTENT */}
-          <div className="space-y-6 order-2 lg:order-1">
-            <h1 className="text-6xl font-bold tracking-tight">
-              <span className="text-white">Hi, It's </span>
-              <span className="text-red-600">Bhuvaneshwar</span>
-            </h1>
-            <h2 className="text-3xl font-bold text-white flex items-center">
-              I'm a&nbsp;<span className="text-red-600">Coder</span>
-            </h2>
-            <p className="max-w-lg text-gray-300 text-lg leading-relaxed">
-              I'm a Python Developer who loves solving problems and exploring
-              new technologies.
+      <div style={styles.page}>
+        <div style={styles.nameBlock}>
+          <pre style={styles.namePre}>{`
+ ██████╗ ██╗  ██╗██╗   ██╗██╗   ██╗ █████╗ ███╗   ██╗
+ ██╔══██╗██║  ██║██║   ██║██║   ██║██╔══██╗████╗  ██║
+ ██████╔╝███████║██║   ██║██║   ██║███████║██╔██╗ ██║
+ ██╔══██╗██╔══██║██║   ██║╚██╗ ██╔╝██╔══██║██║╚██╗██║
+ ██████╔╝██║  ██║╚██████╔╝ ╚████╔╝ ██║  ██║██║ ╚████║
+ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝`}</pre>
+        </div>
+
+        <div style={styles.grid}>
+          <div style={styles.infoBlock}>
+            <p style={styles.label}>$ whoami</p>
+            <p style={styles.value}>Bhuvaneshwar Marri</p>
+
+            <p style={styles.label}>$ role</p>
+            <p style={styles.value}>Full Stack Developer · AI Enthusiast</p>
+
+            <p style={styles.label}>$ location</p>
+            <p style={styles.value}>India</p>
+
+            <p style={styles.label}>$ status</p>
+            <p style={{ ...styles.value, color: "var(--accent2)" }}>
+              ● Open to opportunities
             </p>
-            {/* Socials & Buttons (Keep your existing code here) */}
-          </div>
 
-          {/* RIGHT SIDE – ASCII ART DISPLAY */}
-          <div className="flex justify-center lg:justify-end order-1 lg:order-2">
-            <div className="relative">
-              
-              {/* The Glow Aura */}
-              <div className="absolute inset-0 rounded-full blur-[60px] bg-red-600/30"></div>
+            <p style={styles.label}>$ description</p>
+            <p style={styles.desc}>
+              Passionate about building innovative, elegant solutions at the intersection
+              of software engineering and AI. I love creating tools that feel like magic.
+            </p>
 
-              {/* The "Circle" Container for ASCII */}
-              <div className="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px] 
-                            rounded-full border-2 border-red-600/50 
-                            flex items-center justify-center overflow-hidden bg-black shadow-[0_0_50px_rgba(220,38,38,0.2)]">
-                
-                <pre className="ascii-font text-red-500 leading-none select-none pointer-events-none">
-                  {asciiArt}
-                </pre>
-
-              </div>
+            <div style={styles.linkRow}>
+              <a href="https://github.com/BhuvaneshwarMarri" target="_blank" rel="noopener noreferrer" style={styles.link}>
+                ◈ GitHub
+              </a>
+              <a href="https://linkedin.com/in/bhuvan" target="_blank" rel="noopener noreferrer" style={styles.link}>
+                ◈ LinkedIn
+              </a>
+              <a href="mailto:bhuvan@example.com" style={styles.link}>
+                ◈ Email
+              </a>
             </div>
           </div>
 
+          {asciiArt && (
+            <div style={styles.asciiBlock}>
+              <pre style={styles.asciiPre}>{asciiArt}</pre>
+            </div>
+          )}
+        </div>
+
+        <div style={styles.hint}>
+          Type <span style={{ color: "var(--accent)" }}>:theme dracula</span> ·{" "}
+          <span style={{ color: "var(--accent)" }}>:theme nord</span> ·{" "}
+          <span style={{ color: "var(--accent)" }}>:theme gruvbox</span> ·{" "}
+          <span style={{ color: "var(--accent)" }}>:font</span> to customise
         </div>
       </div>
-
-      {/* CSS to ensure ASCII doesn't break */}
-      <style dangerouslySetInnerHTML={{__html: `
-        .ascii-font {
-          font-family: 'Courier New', Courier, monospace;
-          font-size: clamp(4px, 0.8vw, 10px);
-          line-height: 0.8;
-          white-space: pre;
-          text-align: center;
-        }
-      `}} />
     </BvimLayout>
   );
 }
+
+const styles: Record<string, React.CSSProperties> = {
+  page: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    color: "var(--text)",
+  },
+  nameBlock: {
+    overflowX: "auto",
+  },
+  namePre: {
+    color: "var(--accent)",
+    fontSize: "clamp(5px, 0.9vw, 11px)",
+    lineHeight: 1.1,
+    margin: 0,
+    whiteSpace: "pre",
+    fontFamily: "inherit",
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "1fr auto",
+    gap: "24px",
+    alignItems: "start",
+  },
+  infoBlock: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+  },
+  label: {
+    color: "var(--accent3)",
+    fontSize: "0.8em",
+    margin: "8px 0 2px",
+  },
+  value: {
+    color: "var(--text)",
+    margin: 0,
+    fontWeight: 600,
+  },
+  desc: {
+    color: "var(--text-dim)",
+    margin: "4px 0",
+    lineHeight: 1.6,
+    maxWidth: "480px",
+  },
+  linkRow: {
+    display: "flex",
+    gap: "16px",
+    marginTop: "12px",
+    flexWrap: "wrap",
+  },
+  link: {
+    color: "var(--accent)",
+    textDecoration: "none",
+    borderBottom: "1px dashed var(--border-dim)",
+    paddingBottom: "2px",
+    fontSize: "0.9em",
+  },
+  asciiBlock: {
+    overflow: "hidden",
+    maxWidth: "240px",
+  },
+  asciiPre: {
+    fontSize: "clamp(3px, 0.4vw, 7px)",
+    lineHeight: 0.8,
+    color: "var(--text-dim)",
+    margin: 0,
+    opacity: 0.7,
+  },
+  hint: {
+    borderTop: "1px dashed var(--border-dim)",
+    paddingTop: "12px",
+    color: "var(--text-dim)",
+    fontSize: "0.8em",
+  },
+};

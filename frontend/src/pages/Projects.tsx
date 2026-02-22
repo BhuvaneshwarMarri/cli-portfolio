@@ -1,109 +1,100 @@
 import BvimLayout from "../components/BvimLayout";
 
+const projects = [
+  {
+    name: "CLI Portfolio",
+    status: "Active",
+    statusColor: "var(--accent2)",
+    desc: "A unique terminal-inspired portfolio with Vim-like navigation and dual-mode interface.",
+    tags: ["React", "TypeScript", "Vite"],
+    bullets: ["Dual-mode interface (Terminal & Bvim)", "Custom command-line parser", "Vim-inspired keyboard shortcuts", "Multi-theme system"],
+    icon: "◈",
+    href: "https://github.com/BhuvaneshwarMarri",
+  },
+  {
+    name: "SG Games Platform",
+    status: "In Progress",
+    statusColor: "var(--accent)",
+    desc: "A comprehensive gaming platform with real-time multiplayer capabilities.",
+    tags: ["React", "Node.js", "WebSocket"],
+    bullets: ["Real-time multiplayer via WebSocket", "User authentication & leaderboards", "Responsive game UI"],
+    icon: "⬡",
+    href: "#",
+  },
+  {
+    name: "Agentic AI Tools",
+    status: "Research",
+    statusColor: "var(--accent3)",
+    desc: "AI-powered automation tools for developers — autonomous task execution and NL code gen.",
+    tags: ["Python", "LangChain", "OpenAI"],
+    bullets: ["Autonomous task execution", "Natural language code generation", "Multi-agent orchestration"],
+    icon: "⬟",
+    href: "#",
+  },
+];
+
 export default function Projects() {
   return (
     <BvimLayout>
-      <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-cyan-400 mb-4">🚀 Projects</h1>
-        
-        <div className="space-y-4">
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700 hover:border-green-700/50 transition-colors">
-            <div className="flex items-start justify-between mb-2">
-              <h2 className="text-xl font-semibold text-green-400">
-                CLI Portfolio
-              </h2>
-              <span className="px-2 py-1 bg-green-900/30 text-green-300 rounded text-xs border border-green-700/50">
-                Active
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "var(--text)" }}>
+        <h1 style={{ color: "var(--accent)", margin: 0, fontSize: "1.1em", letterSpacing: "0.08em" }}>
+          ◈ PROJECTS
+        </h1>
+
+        {projects.map(p => (
+          <div key={p.name} style={{
+            border: "1px solid var(--border-dim)",
+            borderRadius: "4px",
+            padding: "16px",
+            background: "color-mix(in srgb, var(--bg-sidebar) 40%, transparent)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+              <span style={{ color: p.statusColor, fontSize: "1.1em" }}>{p.icon}</span>
+              <span style={{ color: "var(--text)", fontWeight: 700, fontSize: "1em" }}>{p.name}</span>
+              <span style={{
+                marginLeft: "auto",
+                fontSize: "0.75em",
+                padding: "2px 8px",
+                border: `1px solid ${p.statusColor}`,
+                borderRadius: "2px",
+                color: p.statusColor,
+              }}>
+                {p.status}
               </span>
             </div>
-            <p className="text-gray-400 text-sm mb-3">
-              A unique terminal-inspired portfolio with Vim-like navigation
-            </p>
-            <div className="flex flex-wrap gap-2 mb-3">
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">React</span>
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">TypeScript</span>
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">Vite</span>
+
+            <p style={{ color: "var(--text-dim)", margin: "0 0 10px", fontSize: "0.88em", lineHeight: 1.5 }}>{p.desc}</p>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px" }}>
+              {p.tags.map(t => (
+                <span key={t} style={{
+                  fontSize: "0.75em",
+                  padding: "2px 7px",
+                  background: "var(--selection)",
+                  borderRadius: "2px",
+                  color: "var(--text-dim)",
+                }}>
+                  {t}
+                </span>
+              ))}
             </div>
-            <ul className="space-y-1 text-gray-300 text-sm">
-              <li className="flex items-start">
-                <span className="text-green-400 mr-2">▸</span>
-                Dual-mode interface (Terminal & Bvim)
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-400 mr-2">▸</span>
-                Custom command-line parser
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-400 mr-2">▸</span>
-                Vim-inspired keyboard shortcuts
-              </li>
-            </ul>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+              {p.bullets.map(b => (
+                <p key={b} style={{ margin: 0, color: "var(--text-dim)", fontSize: "0.85em" }}>
+                  <span style={{ color: p.statusColor }}>▸ </span>{b}
+                </p>
+              ))}
+            </div>
           </div>
-          
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700 hover:border-blue-700/50 transition-colors">
-            <div className="flex items-start justify-between mb-2">
-              <h2 className="text-xl font-semibold text-blue-400">
-                SG Games Platform
-              </h2>
-              <span className="px-2 py-1 bg-blue-900/30 text-blue-300 rounded text-xs border border-blue-700/50">
-                In Progress
-              </span>
-            </div>
-            <p className="text-gray-400 text-sm mb-3">
-              A comprehensive gaming platform with multiplayer capabilities
-            </p>
-            <div className="flex flex-wrap gap-2 mb-3">
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">React</span>
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">Node.js</span>
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">WebSocket</span>
-            </div>
-            <ul className="space-y-1 text-gray-300 text-sm">
-              <li className="flex items-start">
-                <span className="text-blue-400 mr-2">▸</span>
-                Real-time multiplayer functionality
-              </li>
-              <li className="flex items-start">
-                <span className="text-blue-400 mr-2">▸</span>
-                User authentication & leaderboards
-              </li>
-            </ul>
-          </div>
-          
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700 hover:border-purple-700/50 transition-colors">
-            <div className="flex items-start justify-between mb-2">
-              <h2 className="text-xl font-semibold text-purple-400">
-                Agentic AI Tools
-              </h2>
-              <span className="px-2 py-1 bg-purple-900/30 text-purple-300 rounded text-xs border border-purple-700/50">
-                Research
-              </span>
-            </div>
-            <p className="text-gray-400 text-sm mb-3">
-              AI-powered automation tools for developers
-            </p>
-            <div className="flex flex-wrap gap-2 mb-3">
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">Python</span>
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">LangChain</span>
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">OpenAI</span>
-            </div>
-            <ul className="space-y-1 text-gray-300 text-sm">
-              <li className="flex items-start">
-                <span className="text-purple-400 mr-2">▸</span>
-                Autonomous task execution
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-400 mr-2">▸</span>
-                Natural language code generation
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <div className="mt-6 p-3 bg-cyan-900/20 border border-cyan-700/50 rounded">
-          <p className="text-cyan-300 text-sm">
-            💡 Check out my <a href="https://github.com/BhuvaneshwarMarri" target="_blank" rel="noopener noreferrer" className="underline hover:text-cyan-200">GitHub</a> for more projects and contributions!
-          </p>
-        </div>
+        ))}
+
+        <p style={{ color: "var(--text-dim)", fontSize: "0.85em", margin: 0 }}>
+          ◈ More on{" "}
+          <a href="https://github.com/BhuvaneshwarMarri" style={{ color: "var(--accent)" }} target="_blank" rel="noopener noreferrer">
+            github.com/BhuvaneshwarMarri
+          </a>
+        </p>
       </div>
     </BvimLayout>
   );

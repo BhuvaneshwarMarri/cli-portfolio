@@ -1,87 +1,74 @@
 import BvimLayout from "../components/BvimLayout";
 
+const skillGroups = [
+  {
+    label: "Languages",
+    color: "var(--accent2)",
+    skills: ["Python", "Java", "TypeScript", "JavaScript", "C++", "SQL"],
+  },
+  {
+    label: "Frontend",
+    color: "var(--accent)",
+    skills: ["React", "TypeScript", "Tailwind CSS", "Vite", "Framer Motion"],
+  },
+  {
+    label: "Backend & Tools",
+    color: "var(--accent3)",
+    skills: ["Node.js", "Express", "MongoDB", "PostgreSQL", "Docker", "Git"],
+  },
+  {
+    label: "AI & Systems",
+    color: "var(--cursor)",
+    skills: ["Agentic AI", "LangChain", "Linux", "Bash", "System Design"],
+  },
+];
+
 export default function Skills() {
   return (
     <BvimLayout>
-      <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-cyan-400 mb-4">💻 Technical Skills</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700">
-            <h2 className="text-xl font-semibold text-green-400 mb-3">
-              Languages
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {["Python", "Java", "TypeScript", "JavaScript", "C++", "SQL"].map(lang => (
-                <span key={lang} className="px-3 py-1 bg-green-900/30 text-green-300 rounded-full text-sm border border-green-700/50">
-                  {lang}
-                </span>
-              ))}
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "var(--text)" }}>
+        <h1 style={{ color: "var(--accent)", margin: 0, fontSize: "1.1em", letterSpacing: "0.08em" }}>
+          λ TECHNICAL SKILLS
+        </h1>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px" }}>
+          {skillGroups.map(group => (
+            <div key={group.label} style={{
+              border: "1px solid var(--border-dim)",
+              borderRadius: "4px",
+              padding: "14px",
+              background: "color-mix(in srgb, var(--bg-sidebar) 60%, transparent)",
+            }}>
+              <p style={{ color: group.color, margin: "0 0 10px", fontWeight: 700, fontSize: "0.85em", letterSpacing: "0.1em" }}>
+                ▸ {group.label.toUpperCase()}
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {group.skills.map(s => (
+                  <span key={s} style={{
+                    padding: "3px 9px",
+                    border: `1px solid ${group.color}`,
+                    borderRadius: "2px",
+                    fontSize: "0.8em",
+                    color: group.color,
+                    background: `color-mix(in srgb, ${group.color} 10%, transparent)`,
+                  }}>
+                    {s}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-          
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700">
-            <h2 className="text-xl font-semibold text-blue-400 mb-3">
-              Frontend
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {["React", "TypeScript", "Tailwind CSS", "Vite", "Framer Motion"].map(tech => (
-                <span key={tech} className="px-3 py-1 bg-blue-900/30 text-blue-300 rounded-full text-sm border border-blue-700/50">
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-          
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700">
-            <h2 className="text-xl font-semibold text-purple-400 mb-3">
-              Backend & Tools
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {["Node.js", "Express", "MongoDB", "PostgreSQL", "Docker", "Git"].map(tech => (
-                <span key={tech} className="px-3 py-1 bg-purple-900/30 text-purple-300 rounded-full text-sm border border-purple-700/50">
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-          
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700">
-            <h2 className="text-xl font-semibold text-yellow-400 mb-3">
-              AI & Systems
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {["Agentic AI", "LangChain", "Linux", "Bash", "System Design"].map(tech => (
-                <span key={tech} className="px-3 py-1 bg-yellow-900/30 text-yellow-300 rounded-full text-sm border border-yellow-700/50">
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
-        
-        <div className="mt-6 p-4 bg-gray-800/50 rounded border border-gray-700">
-          <h2 className="text-xl font-semibold text-cyan-400 mb-3">
-            🎯 Core Competencies
-          </h2>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300">
-            <li className="flex items-start">
-              <span className="text-cyan-400 mr-2">▸</span>
-              Full-stack web development
-            </li>
-            <li className="flex items-start">
-              <span className="text-cyan-400 mr-2">▸</span>
-              RESTful API design
-            </li>
-            <li className="flex items-start">
-              <span className="text-cyan-400 mr-2">▸</span>
-              Database architecture
-            </li>
-            <li className="flex items-start">
-              <span className="text-cyan-400 mr-2">▸</span>
-              DevOps & CI/CD
-            </li>
-          </ul>
+
+        <div style={{ borderTop: "1px dashed var(--border-dim)", paddingTop: "14px" }}>
+          <p style={{ color: "var(--accent)", margin: "0 0 8px", fontSize: "0.85em", fontWeight: 700 }}>▸ CORE COMPETENCIES</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+            {["Full-stack web development", "RESTful API design", "Database architecture", "DevOps & CI/CD", "Agentic AI systems", "System design"].map(c => (
+              <p key={c} style={{ margin: 0, color: "var(--text-dim)", fontSize: "0.88em" }}>
+                <span style={{ color: "var(--accent2)" }}>✓ </span>{c}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
     </BvimLayout>

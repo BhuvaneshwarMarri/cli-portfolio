@@ -8,39 +8,80 @@
   font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   line-height: 1.7;
   font-size: 0.95rem;
 }
 
-/* ---------- Navigation Bar ---------- */
+/* ---------- Sidebar Navigation ---------- */
 
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 1rem;
+.sidebar-container {
+  width: 60px;
   background: #181825;
-  border-bottom: 1px solid #313244;
+  border-right: 1px solid #313244;
+  display: flex;
+  flex-direction: column;
+  padding: 0.8rem 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
-.nav button {
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0 0.4rem;
+}
+
+.sidebar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 100%;
+  padding: 0.8rem 0.4rem;
+  border: none;
+  background: transparent;
   color: #a6adc8;
-  padding: 0.25rem 0.6rem;
   border-radius: 4px;
-  font-size: 0.85rem;
-  transition: background 0.15s ease, color 0.15s ease;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-left 0.15s ease;
+  border-left: 3px solid transparent;
+  font-family: inherit;
 }
 
-.nav button:hover {
+.sidebar-icon {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.sidebar-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-btn:hover {
   background: #313244;
   color: #cdd6f4;
 }
 
-.nav button.active {
-  background: #89b4fa;
-  color: #1e1e2e;
+.sidebar-btn.active {
+  background: rgba(137, 180, 250, 0.1);
+  color: #89b4fa;
+  border-left: 3px solid #89b4fa;
   font-weight: 600;
+}
+
+/* ---------- Main Content Area ---------- */
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 60px);
 }
 
 /* ---------- Content Area ---------- */
@@ -140,6 +181,27 @@
 /* ---------- Responsive ---------- */
 
 @media (max-width: 768px) {
+  .sidebar-container {
+    width: 50px;
+    padding: 0.6rem 0;
+  }
+
+  .sidebar-btn {
+    padding: 0.6rem 0.3rem;
+  }
+
+  .sidebar-icon {
+    font-size: 1rem;
+  }
+
+  .sidebar-label {
+    display: none;
+  }
+
+  .main-content {
+    width: calc(100% - 50px);
+  }
+
   .content {
     padding: 1.2rem;
     font-size: 0.9rem;
@@ -147,6 +209,19 @@
 }
 
 @media (max-width: 480px) {
+  .sidebar-container {
+    width: 45px;
+    padding: 0.5rem 0;
+  }
+
+  .sidebar-btn {
+    padding: 0.5rem 0.2rem;
+  }
+
+  .main-content {
+    width: calc(100% - 45px);
+  }
+
   .content {
     padding: 1rem;
     font-size: 0.85rem;

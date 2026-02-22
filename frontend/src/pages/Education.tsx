@@ -1,54 +1,27 @@
 import BvimLayout from "../components/BvimLayout";
-
 export default function Education() {
   return (
     <BvimLayout>
-      <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-cyan-400 mb-4">🎓 Education</h1>
-        
-        <div className="space-y-6">
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700">
-            <h2 className="text-xl font-semibold text-green-400 mb-2">
-              B.Tech in Computer Science Engineering
-            </h2>
-            <p className="text-gray-400 text-sm mb-3">
-              University Name • Expected 2024
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "var(--text)" }}>
+        <h1 style={{ color: "var(--accent)", margin: 0, fontSize: "1.1em", letterSpacing: "0.08em" }}>∑ EDUCATION</h1>
+
+        <div style={{ border: "1px solid var(--border-dim)", borderRadius: "4px", padding: "16px", background: "color-mix(in srgb, var(--bg-sidebar) 40%, transparent)" }}>
+          <p style={{ color: "var(--accent2)", fontWeight: 700, margin: "0 0 4px" }}>B.Tech in Computer Science Engineering</p>
+          <p style={{ color: "var(--text-dim)", fontSize: "0.82em", margin: "0 0 10px" }}>University Name · Expected 2024</p>
+          {["Focused on software engineering and system design", "Core courses: Data Structures, Algorithms, Database Systems", "Specialization in AI and Machine Learning"].map(b => (
+            <p key={b} style={{ margin: "3px 0", fontSize: "0.88em", color: "var(--text-dim)" }}>
+              <span style={{ color: "var(--accent2)" }}>▸ </span>{b}
             </p>
-            <ul className="space-y-2 text-gray-300">
-              <li className="flex items-start">
-                <span className="text-green-400 mr-2">▸</span>
-                Focused on software engineering and system design
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-400 mr-2">▸</span>
-                Core courses: Data Structures, Algorithms, Database Systems
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-400 mr-2">▸</span>
-                Specialization in AI and Machine Learning
-              </li>
-            </ul>
-          </div>
-          
-          <div className="p-4 bg-gray-800/50 rounded border border-gray-700">
-            <h2 className="text-xl font-semibold text-blue-400 mb-3">
-              📚 Certifications & Courses
-            </h2>
-            <ul className="space-y-2 text-gray-300">
-              <li className="flex items-start">
-                <span className="text-blue-400 mr-2">•</span>
-                Advanced React & TypeScript Development
-              </li>
-              <li className="flex items-start">
-                <span className="text-blue-400 mr-2">•</span>
-                Cloud Computing & AWS Architecture
-              </li>
-              <li className="flex items-start">
-                <span className="text-blue-400 mr-2">•</span>
-                Linux System Administration
-              </li>
-            </ul>
-          </div>
+          ))}
+        </div>
+
+        <div style={{ border: "1px solid var(--border-dim)", borderRadius: "4px", padding: "16px", background: "color-mix(in srgb, var(--bg-sidebar) 40%, transparent)" }}>
+          <p style={{ color: "var(--accent)", fontWeight: 700, margin: "0 0 10px", fontSize: "0.85em", letterSpacing: "0.1em" }}>▸ CERTIFICATIONS</p>
+          {["Advanced React & TypeScript Development", "Cloud Computing & AWS Architecture", "Linux System Administration"].map(c => (
+            <p key={c} style={{ margin: "4px 0", fontSize: "0.88em", color: "var(--text-dim)" }}>
+              <span style={{ color: "var(--accent)" }}>• </span>{c}
+            </p>
+          ))}
         </div>
       </div>
     </BvimLayout>
