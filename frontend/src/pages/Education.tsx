@@ -81,8 +81,8 @@ export default function Education() {
             <div style={{ flex: 1, overflow: "hidden" }}>
               <pre style={{
                 color: "var(--accent)",
-                fontSize: "clamp(7px, 1vw, 11px)",
-                lineHeight: 1.2,
+                fontSize: "clamp(4px, 0.75vw, 10px)",
+                lineHeight: 1.15,
                 margin: "0 0 8px 0",
                 whiteSpace: "pre",
                 fontFamily: "monospace",

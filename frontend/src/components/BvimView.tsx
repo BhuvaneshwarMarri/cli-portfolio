@@ -46,6 +46,28 @@ const THEMES: Record<ThemeName, Record<string, string>> = {
     "--accent": "#7aa2f7", "--accent2": "#9ece6a", "--accent3": "#f7768e",
     "--selection": "#2a2b3d", "--cursor": "#7aa2f7",
   },
+   nothing: {
+    "--bg": "#0a0a0a", "--bg-sidebar": "#000000", "--bg-content": "#0a0a0a",
+    "--border": "#ffffff", "--border-dim": "#222222",
+    "--text": "#ff0000", "--text-dim": "#aaaaaa",
+    "--accent": "#ffffff", "--accent2": "#ff0000", "--accent3": "#ffe566",
+    "--selection": "#1a1a1a", "--cursor": "#ffffff",
+  },
+  cyberpunk: {
+  "--bg": "#0f0f1a", "--bg-sidebar": "#141426", "--bg-content": "#0f0f1a",
+  "--border": "#00f5ff", "--border-dim": "#1f1f33",
+  "--text": "#e0e0ff", "--text-dim": "#5c5c99",
+  "--accent": "#00f5ff", "--accent2": "#39ff14", "--accent3": "#ff007c",
+  "--selection": "#1f1f33", "--cursor": "#00f5ff",
+  },
+  forest: {
+  "--bg": "#0f1a14", "--bg-sidebar": "#13221b", "--bg-content": "#0f1a14",
+  "--border": "#4caf50", "--border-dim": "#1f2e25",
+  "--text": "#d8f3dc", "--text-dim": "#52796f",
+  "--accent": "#4caf50", "--accent2": "#a7c957", "--accent3": "#ff6b6b",
+  "--selection": "#1f2e25", "--cursor": "#4caf50",
+  },
+  
 };
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
@@ -85,6 +107,11 @@ function applyFont(css: string, size: number) {
   document.documentElement.style.setProperty("--font-size", `${size}px`);
 }
 
+function sectionFromPath(pathname: string): Section {
+  const p = pathname.slice(1) as Section;
+  return SECTIONS.includes(p) ? p : "home";
+}
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 type BvimProps = {
@@ -105,41 +132,32 @@ export default function BvimView({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const getCurrentSection = useCallback((): Section => {
-    const p = location.pathname.slice(1) as Section;
-    return SECTIONS.includes(p) ? p : "home";
-  }, [location.pathname]);
+  // Derive active section purely from URL — single source of truth.
+  // This eliminates the dual-useEffect navigation loop.
+  const active = sectionFromPath(location.pathname);
 
-  const [active, setActive] = useState<Section>(getCurrentSection());
   const [focus,  setFocus]  = useState<FocusArea>("sidebar");
   const [cmdBuf, setCmdBuf] = useState("");
   const [cmdMsg, setCmdMsg] = useState("");
 
   const sidebarHidden = focus === "content";
 
-  // Sync active section from URL
-  useEffect(() => {
-    setActive(getCurrentSection());
-  }, [location.pathname, getCurrentSection]);
+  // Helper: navigate to a section (updates URL → active re-derives)
+  const goTo = useCallback((sec: Section) => {
+    navigate(`/${sec}`);
+  }, [navigate]);
 
-  // Navigate when active section changes
-  useEffect(() => {
-    if (location.pathname !== `/${active}`) navigate(`/${active}`);
-  }, [active, navigate, location.pathname]);
-
-  // Apply theme & font whenever props change
-  useEffect(() => { applyTheme(theme); },                    [theme]);
+  // Apply theme & font on mount / prop change
+  useEffect(() => { applyTheme(theme); },                     [theme]);
   useEffect(() => { applyFont(FONTS[fontIdx].css, fontSize); }, [fontIdx, fontSize]);
 
   // ── Command executor ──────────────────────────────────────────────────────
-  // ALL used variables are in the dep array to prevent stale closures.
 
   const executeCmd = useCallback((cmd: string) => {
     const t = cmd.slice(1).trim();
 
     if (["q", "quit", "q!"].includes(t)) { onExit(); return; }
 
-    // :theme <name>
     const themeMatch = t.match(/^theme\s+(\w+)$/);
     if (themeMatch) {
       const n = themeMatch[1] as ThemeName;
@@ -152,13 +170,11 @@ export default function BvimView({
       return;
     }
 
-    // :themes
     if (t === "themes") {
       setCmdMsg(`Themes: ${Object.keys(THEMES).join(" | ")}`);
       return;
     }
 
-    // :font  :font+  :font-
     if (t === "font") {
       const next = (fontIdx + 1) % FONTS.length;
       setFontIdx(next);
@@ -176,9 +192,21 @@ export default function BvimView({
       return;
     }
 
+    // :goto <section>
+    const gotoMatch = t.match(/^(goto|go|e)\s+(\w+)$/);
+    if (gotoMatch) {
+      const sec = gotoMatch[2] as Section;
+      if (SECTIONS.includes(sec)) {
+        goTo(sec);
+        setCmdMsg(`→ ${sec}`);
+      } else {
+        setCmdMsg(`Unknown section: ${sec}`);
+      }
+      return;
+    }
+
     setCmdMsg(`E492: Not an editor command: ${t}`);
-  // ↓ complete dep list — no stale closures
-  }, [fontIdx, onExit, setTheme, setFontIdx, setFontSize]);
+  }, [fontIdx, onExit, setTheme, setFontIdx, setFontSize, goTo]);
 
   // ── Keyboard handler ──────────────────────────────────────────────────────
 
@@ -187,12 +215,11 @@ export default function BvimView({
       const tag = (e.target as HTMLElement).tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
 
-      // Prevent arrow keys from scrolling the page
       if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
         e.preventDefault();
       }
 
-      // ── In command buffer mode ────────────────────────────────────────────
+      // ── In command buffer mode ─────────────────────────────────────────────
       if (cmdBuf.startsWith(":")) {
         if (e.key === "Enter") {
           executeCmd(cmdBuf);
@@ -206,7 +233,7 @@ export default function BvimView({
         return;
       }
 
-      // ── Normal mode ───────────────────────────────────────────────────────
+      // ── Normal mode ────────────────────────────────────────────────────────
       if (e.key === ":") { setCmdBuf(":"); setCmdMsg(""); return; }
 
       if (e.key === "Escape") {
@@ -215,25 +242,22 @@ export default function BvimView({
         return;
       }
 
-      // → or l: sidebar → content
       if ((e.key === "ArrowRight" || e.key === "l") && focus === "sidebar") {
         setFocus("content");
         return;
       }
-      // ← or h: content → sidebar
       if ((e.key === "ArrowLeft" || e.key === "h") && focus === "content") {
         setFocus("sidebar");
         return;
       }
 
-      // Vertical nav in sidebar
       if (focus === "sidebar") {
         const i = SECTIONS.indexOf(active);
         if (e.key === "ArrowDown" || e.key === "j") {
-          setActive(SECTIONS[(i + 1) % SECTIONS.length]);
+          goTo(SECTIONS[(i + 1) % SECTIONS.length]);
         }
         if (e.key === "ArrowUp" || e.key === "k") {
-          setActive(SECTIONS[(i - 1 + SECTIONS.length) % SECTIONS.length]);
+          goTo(SECTIONS[(i - 1 + SECTIONS.length) % SECTIONS.length]);
         }
         if (e.key === "Enter") {
           setFocus("content");
@@ -243,7 +267,7 @@ export default function BvimView({
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [active, cmdBuf, focus, executeCmd, onExit]);
+  }, [active, cmdBuf, focus, executeCmd, onExit, goTo]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -253,7 +277,7 @@ export default function BvimView({
       {/* ════ SIDEBAR ════ */}
       <aside className={[
         "bv-sidebar",
-        sidebarHidden     ? "bv-sidebar--hidden"  : "",
+        sidebarHidden       ? "bv-sidebar--hidden"  : "",
         focus === "sidebar" ? "bv-sidebar--focused" : "",
       ].join(" ")}>
 
@@ -273,7 +297,7 @@ export default function BvimView({
               <li
                 key={sec}
                 className={`bv-tree-item${sec === active ? " bv-tree-item--active" : ""}`}
-                onClick={() => { setActive(sec); setFocus("content"); }}
+                onClick={() => { goTo(sec); setFocus("content"); }}
               >
                 <span className="bv-tree-num">{String(idx + 1).padStart(2, " ")}</span>
                 <span className="bv-tree-icon">{SECTION_ICONS[sec]}</span>
@@ -298,7 +322,7 @@ export default function BvimView({
             <button
               key={sec}
               className={`bv-tab${sec === active ? " bv-tab--active" : ""}`}
-              onClick={() => { setActive(sec); setFocus("content"); }}
+              onClick={() => { goTo(sec); setFocus("content"); }}
             >
               <span className="bv-tab-icon">{SECTION_ICONS[sec]}</span>
               <span className="bv-tab-label">{SECTION_LABELS[sec]}</span>
@@ -455,6 +479,7 @@ const CSS = `
   /* ═════ MAIN ═════ */
 
   .bv-main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .bv-main--full { width: 100%; }
 
   /* ─── Tab row ─── */
   .bv-tabrow {

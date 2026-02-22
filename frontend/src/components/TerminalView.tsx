@@ -57,6 +57,27 @@ const THEMES: Record<ThemeName, Record<string, string>> = {
     "--accent": "#7aa2f7", "--accent2": "#9ece6a", "--accent3": "#f7768e",
     "--selection": "#2a2b3d", "--cursor": "#7aa2f7",
   },
+  nothing: {
+    "--bg": "#0a0a0a", "--bg-sidebar": "#000000", "--bg-content": "#0a0a0a",
+    "--border": "#ffffff", "--border-dim": "#222222",
+    "--text": "#ff0000", "--text-dim": "#aaaaaa",
+    "--accent": "#ffffff", "--accent2": "#ff0000", "--accent3": "#ffe566",
+    "--selection": "#1a1a1a", "--cursor": "#ffffff",
+  },
+  cyberpunk: {
+  "--bg": "#0f0f1a", "--bg-sidebar": "#141426", "--bg-content": "#0f0f1a",
+  "--border": "#00f5ff", "--border-dim": "#1f1f33",
+  "--text": "#e0e0ff", "--text-dim": "#5c5c99",
+  "--accent": "#00f5ff", "--accent2": "#39ff14", "--accent3": "#ff007c",
+  "--selection": "#1f1f33", "--cursor": "#00f5ff",
+  },
+  forest: {
+  "--bg": "#0f1a14", "--bg-sidebar": "#13221b", "--bg-content": "#0f1a14",
+  "--border": "#4caf50", "--border-dim": "#1f2e25",
+  "--text": "#d8f3dc", "--text-dim": "#52796f",
+  "--accent": "#4caf50", "--accent2": "#a7c957", "--accent3": "#ff6b6b",
+  "--selection": "#1f2e25", "--cursor": "#4caf50",
+  },
 };
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
