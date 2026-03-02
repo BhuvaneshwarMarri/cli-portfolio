@@ -51,8 +51,8 @@ html {
 
 /* Custom text selection */
 ::selection {
-  background-color: #1a5fb4;
-  color: #ffffff;
+  background: #1e40af;
+  color: white;
 }
 
 ::-moz-selection {
@@ -86,8 +86,4 @@ input:focus-visible {
   .bvim-container {
     display: none;
   }
-}
-::selection {
-  background: #1e40af;
-  color: white;
 }
