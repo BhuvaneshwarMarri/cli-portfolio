@@ -1,0 +1,52 @@
+/* Main container */
+.edu-container{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  color:var(--text);
+  font-family:var(--font-family,'JetBrains Mono',monospace);
+  overflow:hidden;
+}
+
+/* Header row */
+.edu-header{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+/* Header content */
+.edu-header-content{
+  flex:1;
+  overflow:hidden;
+}
+
+/* ASCII title */
+.edu-ascii{
+  color: var(--accent);
+  font-size: clamp(4px, 0.75vw, 10px);
+  line-height: 1.15;
+  margin: 0 0 8px 0;
+  white-space: pre;
+  font-family: monospace;
+}
+
+/* Subtitle text */
+.edu-subtitle{
+  margin:0;
+  color:var(--text-dim);
+  font-size:0.82em;
+  letter-spacing:0.05em;
+}
+
+/* Body grid */
+.edu-grid{
+  display:grid;
+  grid-template-columns:1fr 260px;
+  gap:0 16px;
+  flex:1;
+  min-height:0;
+  padding-top:14px;
+  align-items:stretch;
+}
+

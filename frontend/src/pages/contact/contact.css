@@ -1,0 +1,171 @@
+/* ================= CONTAINER ================= */
+
+.container{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  color:var(--text);
+  font-family:var(--font-family,'JetBrains Mono',monospace);
+  overflow:hidden;
+}
+
+/* ================= PROMPT FIELD ================= */
+
+.prompt-container{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.prompt-label{
+  font-size:0.78em;
+  min-width:60px;
+  font-weight:600;
+  transition:color 0.15s;
+  user-select:none;
+}
+
+.prompt-focus{
+  color:var(--accent);
+}
+
+.prompt-blur{
+  color:var(--accent3);
+}
+
+.required-star{
+  color:var(--accent3);
+  margin-left:2px;
+}
+
+.prompt-input{
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:var(--text);
+  font-family:var(--font-family);
+  font-size:0.88em;
+  caret-color:var(--accent);
+  line-height:1.5;
+}
+
+.caret{
+  width:2px;
+  height:14px;
+  background:var(--accent);
+  flex-shrink:0;
+  border-radius:1px;
+  animation:bv-blink 1s step-end infinite;
+}
+
+/* ================= INFO ROW ================= */
+
+.info-row{
+  display:flex;
+  gap:8px;
+  align-items:baseline;
+}
+
+.info-label{
+  color:var(--accent3);
+  font-size:0.74em;
+  min-width:64px;
+  flex-shrink:0;
+}
+
+.info-value{
+  font-size:0.86em;
+  line-height:1.5;
+}
+
+.info-active{
+  color:var(--accent);
+  font-weight:700;
+}
+
+/* ================= LINK ROW ================= */
+
+.link-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.link-icon{
+  min-width:14px;
+  font-size:0.95em;
+  flex-shrink:0;
+}
+
+.link-icon-active{
+  color:var(--accent);
+}
+
+.link-icon-normal{
+  color:var(--accent3);
+}
+
+.link-label{
+  color:var(--text-dim);
+  font-size:0.74em;
+  min-width:52px;
+  flex-shrink:0;
+}
+
+.link-anchor{
+  font-size:0.82em;
+  text-decoration:none;
+  padding-bottom:1px;
+  border-bottom:1px dashed var(--border-dim);
+}
+
+.link-active{
+  color:var(--accent);
+  font-weight:700;
+  border-bottom:1px dashed var(--accent);
+}
+
+.link-normal{
+  color:var(--text);
+}
+
+/* ================= BULLET ROW ================= */
+
+.bullet-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.bullet-icon{
+  font-size:0.8em;
+  flex-shrink:0;
+}
+
+.bullet-active{
+  color:var(--accent2);
+}
+
+.bullet-normal{
+  color:var(--accent3);
+}
+
+.bullet-text{
+  font-size:0.85em;
+}
+
+.bullet-text-active{
+  color:var(--accent);
+  font-weight:700;
+}
+
+.bullet-text-normal{
+  color:var(--text-dim);
+}
+
+/* ================= SPINNER ================= */
+
+.spinner{
+  font-size:0.9em;
+}

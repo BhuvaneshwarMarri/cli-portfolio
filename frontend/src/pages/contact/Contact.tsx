@@ -1,52 +1,9 @@
 import { useState, useRef } from "react";
-import BvimLayout from "../components/BvimLayout";
-import SectionBox from "../components/SectionBox";
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  EmailJS config — fill these in from https://www.emailjs.com/
-//  1. Create a free account → Add an Email Service (Gmail, Outlook, etc.)
-//  2. Create an Email Template — use variables: {{from_name}}, {{from_email}},
-//     {{subject}}, {{message}}  and set "To Email" to your own address.
-//  3. Copy your Service ID, Template ID, and Public Key below.
-// ─────────────────────────────────────────────────────────────────────────────
-const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";   // e.g. "service_abc123"
-const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";  // e.g. "template_xyz456"
-const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";   // e.g. "aBcDeFgH..."
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type FormState = "idle" | "sending" | "success" | "error";
-
-interface FormData {
-  from_name : string;
-  from_email: string;
-  subject   : string;
-  message   : string;
-}
-
-// ─── EmailJS send helper (no npm install needed — uses CDN via fetch) ─────────
-
-async function sendViaEmailJS(data: FormData): Promise<void> {
-  const payload = {
-    service_id  : EMAILJS_SERVICE_ID,
-    template_id : EMAILJS_TEMPLATE_ID,
-    user_id     : EMAILJS_PUBLIC_KEY,
-    template_params: data,
-  };
-
-  const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-    method : "POST",
-    headers: { "Content-Type": "application/json" },
-    body   : JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `HTTP ${res.status}`);
-  }
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
+import BvimLayout from "../../components/BvimLayout";
+import SectionBox from "../../components/SectionBox";
+import { type FormState, type FormData } from './constants'
+import {sendViaEmailJS} from './helper'
+import "./contact.css"
 
 export default function Contact() {
   const [form, setForm] = useState<FormData>({
@@ -372,58 +329,27 @@ function PromptField({ prompt, type, placeholder, value, onChange, isFocused, on
   isFocused: boolean; onFocus: () => void; onBlur: () => void; required?: boolean;
 }) {
   return (
-    <div style={{
-      display    : "flex",
-      alignItems : "center",
-      gap        : "10px",
-      padding    : "9px 0",
-      borderBottom: `1px solid ${isFocused ? "var(--accent)" : "var(--border-dim)"}`,
-      transition  : "border-color 0.15s",
-    }}>
-      <span style={{
-        color     : isFocused ? "var(--accent)" : "var(--accent3)",
-        fontSize  : "0.78em",
-        minWidth  : "60px",
-        flexShrink: 0,
-        fontWeight: 600,
-        transition: "color 0.15s",
-        userSelect: "none",
-      }}>
-        {prompt}
-        {required && <span style={{ color: "var(--accent3)", marginLeft: "2px" }}>*</span>}
-      </span>
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        style={{
-          flex      : 1,
-          background: "transparent",
-          border    : "none",
-          outline   : "none",
-          color     : "var(--text)",
-          fontFamily: "var(--font-family)",
-          fontSize  : "0.88em",
-          caretColor: "var(--accent)",
-          lineHeight: 1.5,
-        }}
-      />
-      {/* Blinking caret when focused */}
-      {isFocused && (
-        <span style={{
-          width    : "2px",
-          height   : "14px",
-          background: "var(--accent)",
-          animation : "bv-blink 1s step-end infinite",
-          flexShrink: 0,
-          borderRadius: "1px",
-        }} />
-      )}
-    </div>
-  );
+  <div className="prompt-container">
+
+    <span className={`prompt-label ${isFocused ? "focus" : "blur"}`}>
+      {prompt}
+      {required && <span className="required-star">*</span>}
+    </span>
+
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      className="prompt-input"
+    />
+
+    {isFocused && <span className="caret" />}
+
+  </div>
+);
 }
 
 function Spinner() {
@@ -437,68 +363,64 @@ function Spinner() {
 function InfoRow({ label, value, active = false, valueColor }: {
   label: string; value: string; active?: boolean; valueColor?: string;
 }) {
-  return (
-    <div style={{ display: "flex", gap: "8px", alignItems: "baseline" }}>
-      <span style={{ color: "var(--accent3)", fontSize: "0.74em", minWidth: "64px", flexShrink: 0 }}>
-        $ {label}
-      </span>
-      <span style={{
-        color     : valueColor ?? (active ? "var(--accent)" : "var(--text)"),
-        fontSize  : "0.86em",
-        fontWeight: active ? 700 : 400,
-        lineHeight: 1.5,
-      }}>
-        {active && <span style={{ color: "var(--accent3)" }}>✓ </span>}
-        {value}
-      </span>
-    </div>
-  );
+  return(
+<div className="info-row">
+
+<span className="info-label">
+$ {label}
+</span>
+
+<span className={`info-value ${active?"info-active":""}`}>
+{value}
+</span>
+
+</div>
+);
+  
 }
 
 function LinkRow({ icon, label, href, val, active = false }: {
   icon: string; label: string; href: string; val: string; active?: boolean;
 }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      <span style={{ color: active ? "var(--accent)" : "var(--accent3)", minWidth: "14px", fontSize: "0.95em", flexShrink: 0 }}>
-        {icon}
+        return(
+
+      <div className="link-row">
+
+      <span className={`link-icon ${active?"link-icon-active":"link-icon-normal"}`}>
+      {icon}
       </span>
-      <span style={{ color: "var(--text-dim)", fontSize: "0.74em", minWidth: "52px", flexShrink: 0 }}>
-        $ {label}
+
+      <span className="link-label">
+      $ {label}
       </span>
+
       <a
-        href={href}
-        target={href.startsWith("mailto") ? "_self" : "_blank"}
-        rel="noopener noreferrer"
-        style={{
-          color         : active ? "var(--accent)" : "var(--text)",
-          fontWeight    : active ? 700 : 400,
-          textDecoration: "none",
-          fontSize      : "0.82em",
-          borderBottom  : `1px dashed ${active ? "var(--accent)" : "var(--border-dim)"}`,
-          paddingBottom : "1px",
-        }}
+      href={href}
+      target={href.startsWith("mailto")?"_self":"_blank"}
+      rel="noopener noreferrer"
+      className={`link-anchor ${active?"link-active":"link-normal"}`}
       >
-        {val}
-        {active && <span style={{ color: "var(--accent)", marginLeft: "6px" }}>✓</span>}
+      {val}
       </a>
-    </div>
-  );
+
+      </div>
+
+      );
 }
 
 function BulletRow({ text, active = false }: { text: string; active?: boolean }) {
-  return (
-    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-      <span style={{ color: active ? "var(--accent2)" : "var(--accent3)", fontSize: "0.8em", flexShrink: 0 }}>
-        {active ? "✓" : "▸"}
+    return(
+
+    <div className="bullet-row">
+
+      <span className={`bullet-icon ${active?"bullet-active":"bullet-normal"}`}>
+          {active?"✓":"▸"}
       </span>
-      <span style={{
-        color     : active ? "var(--accent)" : "var(--text-dim)",
-        fontSize  : "0.85em",
-        fontWeight: active ? 700 : 400,
-      }}>
+
+      <span className={`bullet-text ${active?"bullet-text-active":"bullet-text-normal"}`}>
         {text}
       </span>
+
     </div>
   );
 }
