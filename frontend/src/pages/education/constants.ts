@@ -1,0 +1,61 @@
+export const TIMELINE = [
+  {
+    year: "2020", title: "Enrolled — B.Tech CSE",
+    place: "University Name",
+    detail: "Began Bachelor of Technology in Computer Science Engineering. Focused on core CS fundamentals.",
+    tags: ["C", "Python", "Math", "Logic"], status: "done" as const,
+  },
+  {
+    year: "2021", title: "Linux System Administration",
+    place: "Linux Foundation · Certification",
+    detail: "Certified Linux sysadmin — shell scripting, processes, and networking.",
+    tags: ["Linux", "Bash", "Networking"], status:"done" as const,
+  },
+  {
+    year: "2022", title: "Docker & Kubernetes",
+    place: "CNCF · Certification",
+    detail: "Containerisation fundamentals — Docker images, Compose, and Kubernetes.",
+    tags: ["Docker", "K8s", "DevOps"], status: "done" as const,
+  },
+  {
+    year: "2022", title: "Internship — Software Engineering",
+    place: "Startup Inc.",
+    detail: "Built responsive UIs with React & TypeScript, participated in code reviews.",
+    tags: ["React", "TypeScript", "Git"], status: "done" as const,
+  },
+  {
+    year: "2023", title: "Advanced React & TypeScript",
+    place: "Udemy · Certification",
+    detail: "React architecture, custom hooks, performance patterns and TypeScript generics.",
+    tags: ["React", "TypeScript", "Hooks"], status: "done" as const,
+  },
+  {
+    year: "2023", title: "Cloud Computing & AWS",
+    place: "AWS · Certification",
+    detail: "EC2, S3, Lambda, RDS and cloud architecture for production systems.",
+    tags: ["AWS", "Cloud", "Lambda"], status: "done" as const,
+  },
+  {
+    year: "2024", title: "Graduating — B.Tech CSE",
+    place: "University Name · Expected 2024",
+    detail: "Final year. GPA 8.9/10. Capstone project on agentic AI developer tooling.",
+    tags: ["System Design", "AI", "Capstone"], status:"active" as const,
+  },
+  {
+    year: "→", title: "What's Next",
+    place: "Open to opportunities",
+    detail: "Looking for full-time SWE / AI engineering roles.",
+    tags: ["Full-time", "Remote / Hybrid"], status: "next" as const,
+  },
+];
+
+export const COURSES = [
+  "Data Structures & Algorithms",
+  "Database Management Systems",
+  "Operating Systems",
+  "Computer Networks",
+  "Software Engineering",
+  "Machine Learning",
+  "Distributed Systems",
+  "System Design",
+];

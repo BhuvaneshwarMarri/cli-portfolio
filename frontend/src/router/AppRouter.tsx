@@ -1,12 +1,12 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
-import Home from "../pages/Home";
-import Projects from "../pages/Projects";
-import Skills from "../pages/Skills";
-import Contact from "../pages/Contact";
-import Education from "../pages/Education";
-import Experience from "../pages/Experience";
+import Home from "../pages/home/Home";
+import Projects from "../pages/projects/Projects";
+import Skills from "../pages/skills/Skills";
+import Contact from "../pages/contact/Contact";
+import Education from "../pages/education/Education";
+import Experience from "../pages/experience/Experience";
 
 export default function AppRouter() {
   const location = useLocation();

@@ -1,0 +1,82 @@
+import BvimLayout from "../../components/BvimLayout";
+import SectionBox from "../../components/SectionBox";
+import {SKILL_MATRIX,JOBS} from "./constants";
+import { StatRow, SkillBar, JobCard } from "./components/helpers";
+import './experience.css'
+
+export default function Experience() {
+  return (
+    <BvimLayout>
+      <div className="experience-container">
+
+        {/* ── HEADER ──────────────────────────────────────────────────────── */}
+        <SectionBox title="~/work_history">
+          <div className="exp-header">
+            <div className="exp-header-content">
+              <pre className="exp-ascii">
+{`\
+ ███████╗██╗  ██╗██████╗ ███████╗██████╗ ██╗███████╗███╗   ██╗ ██████╗███████╗
+ ██╔════╝╚██╗██╔╝██╔══██╗██╔════╝██╔══██╗██║██╔════╝████╗  ██║██╔════╝██╔════╝
+ █████╗   ╚███╔╝ ██████╔╝█████╗  ██████╔╝██║█████╗  ██╔██╗ ██║██║     █████╗  
+ ██╔══╝   ██╔██╗ ██╔═══╝ ██╔══╝  ██╔══██╗██║██╔══╝  ██║╚██╗██║██║     ██╔══╝  
+ ███████╗██╔╝ ██╗██║     ███████╗██║  ██║██║███████╗██║ ╚████║╚██████╗███████╗
+ ╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝`}
+              </pre>
+              <p className="exp-subtitle">
+                Experience Engine v2.0 &nbsp;·&nbsp;
+                <span style={{ color: "var(--accent2)" }}>{JOBS.length} roles detected</span>
+              </p>
+            </div>
+            <div style={{ textAlign: "right", flexShrink: 0 }}>
+              <div className="exp-total-years">2.4 YRS</div>
+              <div className="exp-total-label">TOTAL EXP</div>
+            </div>
+          </div>
+        </SectionBox>
+
+        {/* ── BODY ────────────────────────────────────────────────────────── */}
+        <div className="exp-grid">
+
+          {/* ── LEFT: Job Timeline ──────────────────────────────────────── */}
+          <SectionBox
+            title="Professional History"
+            style={{ display: "flex", flexDirection: "column", minHeight: 0, margin: 0 }}
+          >
+            <div className="exp-scroll">
+              {JOBS.map((job, idx) => (
+                <JobCard key={job.title} job={job} isLast={idx === JOBS.length - 1} />
+              ))}
+            </div>
+          </SectionBox>
+
+          {/* ── RIGHT: Skill Matrix + Summary ───────────────────────────── */}
+          <div className="exp-right-panel">
+
+            {/* Summary stats */}
+            <SectionBox title="Summary" style={{ margin: 0 }}>
+              <div className="exp-summary-list">
+                <StatRow label="Total Exp"  value="2.4 yrs"  color="var(--accent2)" active />
+                <StatRow label="Companies"  value="2"        color="var(--accent)"  />
+                <StatRow label="Stack"      value="Full"     color="var(--accent3)" />
+                <StatRow label="Domain"     value="Web · AI" color="var(--accent)"  />
+              </div>
+            </SectionBox>
+
+            {/* Skill matrix */}
+            <SectionBox
+              title="Skill Matrix"
+              style={{ margin: 0, flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}
+            >
+              <div className="exp-skill-scroll">
+                {SKILL_MATRIX.map(s => (
+                  <SkillBar key={s.label} label={s.label} level={s.level} color={s.color} />
+                ))}
+              </div>
+            </SectionBox>
+
+          </div>
+        </div>
+      </div>
+    </BvimLayout>
+  );
+}
