@@ -1,12 +1,13 @@
 import BvimLayout from "../../components/BvimLayout";
 import SectionBox from "../../components/SectionBox";
-import {SKILL_GROUPS, TECH_STACK, PROFICIENCY_LEVELS} from './constants'
 import { SkillRow } from "./components/SkillRow";
 import './skills.css'
+import useSkillsData from "./useSkillsData";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Skills() {
+  const {SKILL_GROUPS, TECH_STACK, PROFICIENCY_LEVELS} = useSkillsData();
   return (
     <BvimLayout>
       <div className="sk-container">

@@ -1,6 +1,22 @@
-import {JOBS} from "../constants";
+export interface JobType {
+  title: string;
+  company: string;
+  type: string;
+  location: string;
+  status: "ACTIVE" | string;
+  period: string;
+  duration: string;
+  stack: string[];
+  bullets: string[];
+  metrics: { label: string; value: string; color: string }[];
+}
 
-export function JobCard({ job: j, isLast }: { job: typeof JOBS[number]; isLast: boolean }) {
+interface JobCardProps {
+  job: JobType;
+  isLast: boolean;
+}
+
+export function JobCard({ job: j, isLast }: JobCardProps) {
   const isActive  = j.status === "ACTIVE";
   const accentCol = isActive ? "var(--accent2)" : "var(--border-dim)";
 
@@ -84,7 +100,7 @@ export function JobCard({ job: j, isLast }: { job: typeof JOBS[number]; isLast: 
 
         {/* Stack tags */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px" }}>
-          {j.stack.map(s => (
+          {j.stack?.map(s => (
             <span key={s} style={{
               fontSize    : "0.68em",
               color       : "var(--accent3)",
@@ -100,14 +116,14 @@ export function JobCard({ job: j, isLast }: { job: typeof JOBS[number]; isLast: 
 
         {/* Bullets */}
         <ul style={{ margin: "0 0 12px 0", paddingLeft: "14px", listStyleType: "'↳ '", color: "var(--text-dim)", fontSize: "0.82em" }}>
-          {j.bullets.map((b, i) => (
+          {j.bullets?.map((b, i) => (
             <li key={i} style={{ marginBottom: "4px", lineHeight: 1.5 }}>{b}</li>
           ))}
         </ul>
 
         {/* Metrics */}
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-          {j.metrics.map(m => (
+          {j.metrics?.map(m => (
             <div key={m.label} style={{
               display     : "flex",
               flexDirection: "column",

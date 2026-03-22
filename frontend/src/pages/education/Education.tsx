@@ -1,10 +1,11 @@
 import BvimLayout from "../../components/BvimLayout";
 import SectionBox from "../../components/SectionBox";
-import {TIMELINE, COURSES } from './constants'
 import './education.css'
 import { TimelineItem } from "./components/TimelineItem";
+import useEducationData from "./useEducationData"; 
 
 export default function Education() {
+  const {TIMELINE, COURSES} = useEducationData();
   return (
     <BvimLayout>
       <div className="edu-container">

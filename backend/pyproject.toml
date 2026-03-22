@@ -9,6 +9,7 @@ dependencies = [
     "motor>=3.7.1",
     "pydantic-settings>=2.13.1",
     "python-dotenv>=1.2.2",
+    "tinydb>=4.8.2",
 ]
 
 [dependency-groups]

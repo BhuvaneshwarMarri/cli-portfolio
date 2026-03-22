@@ -1,7 +1,36 @@
+import { useEffect, useState } from "react";
 import SectionBox from "../../../components/SectionBox";
+
+interface ProfileStats {
+  repositories: number;
+  open_source: number;
+  total_stars: number;
+  total_forks: number;
+}
 
 export function ProfileCard() {
   const contributions = [2, 5, 3, 7, 4, 6, 1, 8, 5, 3, 6, 2, 7, 4, 8, 5, 3, 6, 2, 7, 4, 5, 8, 3];
+
+  const [stats, setStats] = useState<ProfileStats | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("http://localhost:8000/projects/stats")
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted) setStats(data);
+      })
+      .catch(err => console.error("[ProfileCard] stats fetch failed:", err));
+    
+    return () => { isMounted = false; };
+  }, []);
+
+  const statItems = [
+    { label: "Repos",  value: stats ? String(stats.repositories) : "…", color: "var(--accent)"  },
+    { label: "Stars",  value: stats ? String(stats.total_stars)  : "…", color: "var(--accent3)" },
+    { label: "Forks",  value: stats ? String(stats.total_forks)  : "…", color: "var(--text-dim)" },
+    { label: "OSS",    value: stats ? String(stats.open_source)  : "…", color: "var(--accent2)" },
+  ];
 
   return (
     <SectionBox title="GitHub Profile" style={{ margin: 0, flex: 1, display: "flex", flexDirection: "column" }}>
@@ -26,7 +55,9 @@ export function ProfileCard() {
         </div>
         <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: "0.88em" }}>Bhuvaneshwar Marri</div>
-          <a
+          
+          {/* FIXED: Added missing 'a' tag name */}
+          <a 
             href="https://github.com/BhuvaneshwarMarri"
             target="_blank"
             rel="noopener noreferrer"
@@ -44,12 +75,7 @@ export function ProfileCard() {
 
       {/* Stats grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", marginBottom: "14px" }}>
-        {[
-          { label: "Repos",  value: "10+", color: "var(--accent)"  },
-          { label: "Stars",  value: "53",  color: "var(--accent3)" },
-          { label: "Forks",  value: "9",   color: "var(--text-dim)"},
-          { label: "OSS",    value: "6",   color: "var(--accent2)" },
-        ].map(s => (
+        {statItems.map(s => (
           <div key={s.label} style={{
             padding     : "6px 8px",
             border      : "1px solid var(--border-dim)",
@@ -110,8 +136,9 @@ export function ProfileCard() {
         ))}
       </div>
 
-      {/* View profile */}
-      <a
+      {/* View profile link */}
+      {/* FIXED: Added missing 'a' tag name */}
+      <a 
         href="https://github.com/BhuvaneshwarMarri"
         target="_blank"
         rel="noopener noreferrer"

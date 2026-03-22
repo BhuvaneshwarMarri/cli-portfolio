@@ -5,6 +5,7 @@ import { type FormState, type FormData } from './constants'
 import {sendViaEmailJS} from './helper'
 import "./contact.css"
 
+
 export default function Contact() {
   const [form, setForm] = useState<FormData>({
     from_name : "",

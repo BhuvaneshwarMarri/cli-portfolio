@@ -1,10 +1,8 @@
 import BvimLayout from "../../components/BvimLayout";
 import SectionBox from "../../components/SectionBox";
-import { PROJECTS,STATS } from "./constants";
-import {ProfileCard, RepoRow} from './components/helper'
-import './projects.css'
-
-// ─── Page ──────────────────────────────────────────────────────────────────────
+import { PROJECTS, STATS } from "./constants";
+import { ProfileCard, RepoRow } from "./components/helper";
+import "./projects.css";
 
 export default function Projects() {
   return (
@@ -28,7 +26,6 @@ export default function Projects() {
               </p>
             </div>
 
-            {/* Quick stats row */}
             <div className="pr-stats">
               {STATS.map(s => (
                 <div key={s.label} className="pr-stat-card">
@@ -40,10 +37,8 @@ export default function Projects() {
           </div>
         </SectionBox>
 
-        {/* ── BODY: list + sidebar ────────────────────────────────────────── */}
+        {/* ── BODY ────────────────────────────────────────────────────────── */}
         <div className="pr-grid">
-
-          {/* ── Repo List ─────────────────────────────────────────────────── */}
           <SectionBox
             title="Repositories"
             style={{ display: "flex", flexDirection: "column", minHeight: 0, margin: 0 }}
@@ -55,12 +50,11 @@ export default function Projects() {
             </div>
           </SectionBox>
 
-          {/* ── GitHub Profile Panel ──────────────────────────────────────── */}
           <div className="pr-sidebar">
             <ProfileCard />
           </div>
-
         </div>
+
       </div>
     </BvimLayout>
   );
