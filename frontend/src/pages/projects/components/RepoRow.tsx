@@ -1,4 +1,4 @@
-import type { Project } from "../useProjectData";
+import type { Project } from "../fetchGithubProjects";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const LANG_COLORS: Record<string, string> = {
@@ -17,17 +17,6 @@ const LANG_COLORS: Record<string, string> = {
   PowerShell:         "#012456",
   "Jupyter Notebook": "#DA5B0B",
 };
-
-function timeAgo(iso: string): string {
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (diff < 60)          return "just now";
-  if (diff < 3600)        return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400)       return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 86400 * 7)   return `${Math.floor(diff / 86400)}d ago`;
-  if (diff < 86400 * 30)  return `${Math.floor(diff / (86400 * 7))}w ago`;
-  if (diff < 86400 * 365) return `${Math.floor(diff / (86400 * 30))}mo ago`;
-  return `${Math.floor(diff / (86400 * 365))}y ago`;
-}
 
 // ── RepoRow ──────────────────────────────────────────────────────────────────
 export function RepoRow({
@@ -63,7 +52,7 @@ export function RepoRow({
         </svg>
 
         <a
-          href={p.url}
+          href={p.href}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -96,7 +85,6 @@ export function RepoRow({
           opacity:    0.55,
           flexShrink: 0,
         }}>
-          {timeAgo(p.updated_at)}
         </span>
       </div>
 
@@ -149,11 +137,10 @@ export function RepoRow({
           <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
             <path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
           </svg>
-          {p.forks}
         </span>
 
         <a
-          href={p.url}
+          href={p.href}
           target="_blank"
           rel="noopener noreferrer"
           style={{

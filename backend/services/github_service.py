@@ -1,20 +1,17 @@
-import time
+# backend/services/github_service.py
 import httpx
 from backend.config import settings
+from backend.cache.cache import get_cached, set_cached
 
-# ── Simple in-memory cache ────────────────────────────────────────────────────
-_cache: dict = {"data": None, "fetched_at": 0.0}
-
+CACHE_KEY = f"github:repos:{settings.github_username}"
 
 async def get_repos() -> list[dict]:
-    now = time.time()
-
-    # Return cached data if still fresh
-    if _cache["data"] is not None and (now - _cache["fetched_at"]) < settings.github_cache_ttl:
-        return _cache["data"]
+    cached = await get_cached(CACHE_KEY)
+    if cached:
+        return cached
 
     headers = {
-        "Accept": "application/vnd.github+json",
+        "Accept": "application/vnd.github.mercy-preview+json",
         "X-GitHub-Api-Version": "2022-11-28",
     }
     if settings.github_token:
@@ -29,22 +26,26 @@ async def get_repos() -> list[dict]:
         response.raise_for_status()
         raw = response.json()
 
+    # SELECTED_REPOS = {
+    #     "cli-portfolio",
+    #     "sg-games-platform",
+    #     "agentic-ai-tools",
+    #     "devops-automation",
+    # }
+
     repos = [
         {
             "name":        r["name"],
             "description": r["description"] or "",
             "stars":       r["stargazers_count"],
-            "forks":       r["forks_count"],
             "language":    r["language"] or "Unknown",
             "url":         r["html_url"],
             "visibility":  "Public" if not r["private"] else "Private",
             "updated_at":  r["updated_at"],
+            "topics":      r.get("topics", []),
         }
         for r in raw
     ]
 
-    # Store in cache
-    _cache["data"] = repos
-    _cache["fetched_at"] = now
-    print(repos)
+    await set_cached(CACHE_KEY, repos, ttl=settings.github_cache_ttl)
     return repos

@@ -16,6 +16,5 @@ async def project_stats():
     return {
         "repositories": len(repos),
         "open_source":  sum(1 for r in repos if r["visibility"] == "Public"),
-        "total_stars":  sum(r["stars"] for r in repos),
-        "total_forks":  sum(r["forks"] for r in repos),
+        "total_stars":  sum(r["stars"] for r in repos)
     }

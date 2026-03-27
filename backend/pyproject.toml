@@ -9,6 +9,7 @@ dependencies = [
     "motor>=3.7.1",
     "pydantic-settings>=2.13.1",
     "python-dotenv>=1.2.2",
+    "redis[asyncio]>=7.4.0",
     "tinydb>=4.8.2",
 ]
 
