@@ -15,7 +15,7 @@ export default function useContactForm() {
   const submit = async (data: FormData) => {
     setStatus("sending");
     try {
-      const res = await fetch("http://localhost:8000/contact", {
+      const res = await fetch("http://localhost:8000/home/links", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify(data),

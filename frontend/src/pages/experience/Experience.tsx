@@ -34,7 +34,7 @@ export default function Experience() {
               </p>
             </div>
             <div style={{ textAlign: "right", flexShrink: 0 }}>
-              <div className="exp-total-years">2.4 YRS</div>
+              <div className="exp-total-years">1.2 YRS</div>
               <div className="exp-total-label">TOTAL EXP</div>
             </div>
           </div>
