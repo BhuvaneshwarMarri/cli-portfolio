@@ -4,6 +4,8 @@ import com.smaarig.portfolio_editor.models.home.Command
 import com.smaarig.portfolio_editor.models.home.Interest
 import com.smaarig.portfolio_editor.models.home.Link
 import com.smaarig.portfolio_editor.models.education.Timeline
+import com.smaarig.portfolio_editor.models.experience.Job
+import com.smaarig.portfolio_editor.models.experience.SkillMatrix
 import retrofit2.http.*
 
 interface HomeApiService {
@@ -56,4 +58,34 @@ interface HomeApiService {
 
     @DELETE("courses/timeline/{title}")
     suspend fun deleteTimeline(@Path("title") title: String)
+
+    // Experience - Jobs
+    @GET("experience/jobs")
+    suspend fun getJobs(): List<Job>
+
+    @POST("experience/jobs")
+    suspend fun addJob(@Body job: Job): Job
+
+    @DELETE("experience/jobs/{company}/{title}")
+    suspend fun deleteJob(@Path("company") company: String, @Path("title") title: String)
+
+    // Experience - Skill Matrix
+    @GET("experience/skill-matrix")
+    suspend fun getSkillMatrix(): List<SkillMatrix>
+
+    @POST("experience/skill-matrix")
+    suspend fun addSkillMatrix(@Body skillMatrix: SkillMatrix): SkillMatrix
+
+    @DELETE("experience/skill-matrix/{label}")
+    suspend fun deleteSkillMatrix(@Path("label") label: String)
+
+    // Projects
+    @GET("projects")
+    suspend fun getProjects(): List<String>
+
+    @POST("projects")
+    suspend fun addProject(@Body project: String): String
+
+    @DELETE("projects/{name}")
+    suspend fun deleteProject(@Path("name") name: String)
 }
