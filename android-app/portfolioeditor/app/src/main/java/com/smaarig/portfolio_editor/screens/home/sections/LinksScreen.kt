@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smaarig.portfolio_editor.models.home.Link
 import com.smaarig.portfolio_editor.viewmodels.home.LinksUiState
@@ -30,16 +31,22 @@ fun LinksScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
-        }
+        },
+        containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when (val state = uiState) {
-                is LinksUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is LinksUiState.Loading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 2.dp
+                )
                 is LinksUiState.Success -> LinkList(state.data, onDelete = { viewModel.deleteLink(it.label) })
                 is LinksUiState.Error -> ErrorState(state.message) { viewModel.fetchLinks() }
             }
@@ -62,8 +69,8 @@ fun LinksScreen(
 fun LinkList(links: List<Link>, onDelete: (Link) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(links, key = { it.label }) { link ->
             ElevatedCard(
@@ -73,9 +80,13 @@ fun LinkList(links: List<Link>, onDelete: (Link) -> Unit) {
                         onClick = { },
                         onLongClick = { onDelete(link) }
                     ),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
+                shape = MaterialTheme.shapes.large,
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(20.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -84,43 +95,52 @@ fun LinkList(links: List<Link>, onDelete: (Link) -> Unit) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Surface(
                                 shape = MaterialTheme.shapes.small,
-                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                modifier = Modifier.size(32.dp)
+                                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                                modifier = Modifier.size(40.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Text(
                                         text = link.icon.ifEmpty { "🔗" },
-                                        style = MaterialTheme.typography.bodyLarge
+                                        style = MaterialTheme.typography.titleMedium
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.width(12.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = link.label,
+                                text = link.label.uppercase(),
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                letterSpacing = 1.sp
                             )
                         }
                         if (link.active) {
                             Badge(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
                                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                             ) {
-                                Text("Active", modifier = Modifier.padding(horizontal = 4.dp))
+                                Text(
+                                    "ACTIVE", 
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                                )
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = link.value,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = link.href,
+                        text = link.href.lowercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
                         textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
                     )
                 }
@@ -139,24 +159,33 @@ fun AddLinkDialog(onDismiss: () -> Unit, onConfirm: (Link) -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Link") },
+        title = { 
+            Text(
+                "NEW CONNECTION",
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            ) 
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = icon, onValueChange = { icon = it }, label = { Text("Icon") })
-                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Label") })
-                OutlinedTextField(value = href, onValueChange = { href = it }, label = { Text("URL (href)") })
-                OutlinedTextField(value = value, onValueChange = { value = it }, label = { Text("Value") })
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(value = icon, onValueChange = { icon = it }, label = { Text("Icon") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Label") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = href, onValueChange = { href = it }, label = { Text("URL") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = value, onValueChange = { value = it }, label = { Text("Display Value") }, modifier = Modifier.fillMaxWidth())
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = active, onCheckedChange = { active = it })
-                    Text("Active")
+                    Text("ACTIVE_STATUS", fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace, style = MaterialTheme.typography.labelMedium)
                 }
             }
         },
         confirmButton = {
-            Button(onClick = { onConfirm(Link(icon, label, href, value, active)) }, enabled = label.isNotBlank()) { Text("Add") }
+            TextButton(
+                onClick = { onConfirm(Link(icon, label, href, value, active)) }, 
+                enabled = label.isNotBlank()
+            ) { Text("LINK") }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text("ABORT") }
         }
     )
 }

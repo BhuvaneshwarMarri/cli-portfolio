@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.smaarig.portfolio_editor.screens.contact.ContactScreen
+import com.smaarig.portfolio_editor.screens.settings.SettingsScreen
 import com.smaarig.portfolio_editor.screens.education.sections.CoursesScreen
 import com.smaarig.portfolio_editor.screens.education.EducationScreen
 import com.smaarig.portfolio_editor.screens.education.sections.TimelineScreen
@@ -28,15 +30,22 @@ import com.smaarig.portfolio_editor.screens.skills.sections.TechStackScreen
 @Composable
 fun MainNavigationGraph(
     navController: NavHostController,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    themeViewModel: com.smaarig.portfolio_editor.viewmodels.theme.ThemeViewModel
 ){
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Home.route,
-        modifier = Modifier.padding(innerPadding)
+        modifier = Modifier.padding(
+            top = innerPadding.calculateTopPadding(),
+            bottom = 100.dp
+        )
     ){
         composable(BottomNavItem.Home.route) {
             HomeScreen(navController)
+        }
+        composable("settings") {
+            SettingsScreen(themeViewModel)
         }
         composable("commands") {
             CommandsScreen()

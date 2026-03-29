@@ -33,3 +33,21 @@ val NothingPrimary = Color(0xFFFFFFFF)
 val NothingBackground = Color(0xFF000000)
 val NothingSurface = Color(0xFF111111)
 val NothingOnSurface = Color(0xFFFFFFFF)
+
+// Nord
+val NordPrimary = Color(0xFF88C0D0)
+val NordBackground = Color(0xFF2E3440)
+val NordSurface = Color(0xFF3B4252)
+val NordOnSurface = Color(0xFFECEFF4)
+
+// Dracula
+val DraculaPrimary = Color(0xFFBD93F9)
+val DraculaBackground = Color(0xFF282A36)
+val DraculaSurface = Color(0xFF44475A)
+val DraculaOnSurface = Color(0xFFF8F8F2)
+
+// Tokyo Night
+val TokyoNightPrimary = Color(0xFF7AA2F7)
+val TokyoNightBackground = Color(0xFF1A1B26)
+val TokyoNightSurface = Color(0xFF24283B)
+val TokyoNightOnSurface = Color(0xFFC0CAF5)

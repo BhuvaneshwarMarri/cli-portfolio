@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smaarig.portfolio_editor.models.home.Command
 import com.smaarig.portfolio_editor.viewmodels.home.CommandsUiState
@@ -31,16 +32,22 @@ fun CommandsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
-        }
+        },
+        containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when (val state = uiState) {
-                is CommandsUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is CommandsUiState.Loading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 2.dp
+                )
                 is CommandsUiState.Success -> CommandList(state.data, onDelete = { viewModel.deleteCommand(it.cmd) })
                 is CommandsUiState.Error -> ErrorState(state.message) { viewModel.fetchCommands() }
             }
@@ -63,8 +70,8 @@ fun CommandsScreen(
 fun CommandList(commands: List<Command>, onDelete: (Command) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(commands, key = { it.cmd }) { command ->
             ElevatedCard(
@@ -74,27 +81,33 @@ fun CommandList(commands: List<Command>, onDelete: (Command) -> Unit) {
                         onClick = { },
                         onLongClick = { onDelete(command) }
                     ),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
+                shape = MaterialTheme.shapes.large,
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(20.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "> ${command.cmd}",
+                            text = "> ${command.cmd.uppercase()}",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            letterSpacing = 1.sp
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = command.desc,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 20.sp
                     )
                 }
             }
@@ -109,18 +122,39 @@ fun AddCommandDialog(onDismiss: () -> Unit, onConfirm: (Command) -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Command") },
+        title = { 
+            Text(
+                "NEW COMMAND", 
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            ) 
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = cmd, onValueChange = { cmd = it }, label = { Text("Command") })
-                OutlinedTextField(value = desc, onValueChange = { desc = it }, label = { Text("Description") })
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = cmd, 
+                    onValueChange = { cmd = it }, 
+                    label = { Text("Command Name") },
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = desc, 
+                    onValueChange = { desc = it }, 
+                    label = { Text("Description") },
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         },
         confirmButton = {
-            Button(onClick = { onConfirm(Command(cmd, desc)) }, enabled = cmd.isNotBlank()) { Text("Add") }
+            TextButton(
+                onClick = { onConfirm(Command(cmd, desc)) }, 
+                enabled = cmd.isNotBlank()
+            ) { Text("EXECUTE") }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text("CANCEL") }
         }
     )
 }
@@ -130,39 +164,41 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Surface(
-            modifier = Modifier.size(80.dp),
-            color = MaterialTheme.colorScheme.errorContainer,
+            modifier = Modifier.size(64.dp),
+            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
             shape = CircleShape
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Text("⚠️", style = MaterialTheme.typography.headlineLarge)
+                Text("!", style = MaterialTheme.typography.headlineLarge, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "Something went wrong",
+            text = "SYSTEM_FAILURE",
             style = MaterialTheme.typography.titleLarge,
+            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = message,
-            style = MaterialTheme.typography.bodyMedium,
+            text = message.uppercase(),
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = onRetry,
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.fillMaxWidth(0.6f)
+            shape = MaterialTheme.shapes.small,
+            modifier = Modifier.fillMaxWidth(0.7f)
         ) {
-            Text("Retry")
+            Text("REBOOT_SYSTEM", fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
         }
     }
 }

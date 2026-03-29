@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smaarig.portfolio_editor.models.experience.Job
 import com.smaarig.portfolio_editor.models.experience.Metric
@@ -34,16 +35,22 @@ fun JobsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
-        }
+        },
+        containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when (val state = uiState) {
-                is JobsUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is JobsUiState.Loading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 2.dp
+                )
                 is JobsUiState.Success -> JobList(state.data, onDelete = { viewModel.deleteJob(it.company, it.title) })
                 is JobsUiState.Error -> ErrorState(state.message) { viewModel.fetchJobs() }
             }
@@ -66,7 +73,7 @@ fun JobsScreen(
 fun JobList(jobs: List<Job>, onDelete: (Job) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         items(jobs, key = { "${it.company}_${it.title}" }) { job ->
@@ -77,24 +84,29 @@ fun JobList(jobs: List<Job>, onDelete: (Job) -> Unit) {
                         onClick = { },
                         onLongClick = { onDelete(job) }
                     ),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
-                shape = MaterialTheme.shapes.large
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
+                shape = MaterialTheme.shapes.large,
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                )
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Text(
-                        text = job.title,
-                        style = MaterialTheme.typography.headlineSmall,
+                        text = job.title.uppercase(),
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                        letterSpacing = 1.sp
                     )
                     Text(
                         text = job.company,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Bold
                     )
                     
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -104,13 +116,19 @@ fun JobList(jobs: List<Job>, onDelete: (Job) -> Unit) {
                         Text(
                             text = job.period,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                         )
                         Badge(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ) {
-                            Text(job.status, modifier = Modifier.padding(horizontal = 4.dp))
+                            Text(
+                                job.status.uppercase(), 
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                            )
                         }
                     }
                     
@@ -121,7 +139,7 @@ fun JobList(jobs: List<Job>, onDelete: (Job) -> Unit) {
                     )
                     
                     if (job.stack.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -129,53 +147,73 @@ fun JobList(jobs: List<Job>, onDelete: (Job) -> Unit) {
                             job.stack.forEach { tech ->
                                 SuggestionChip(
                                     onClick = {},
-                                    label = { Text(tech) },
+                                    label = { 
+                                        Text(
+                                            tech,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                                        ) 
+                                    },
                                     colors = AssistChipDefaults.assistChipColors(
-                                        containerColor = MaterialTheme.colorScheme.surface
-                                    )
+                                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
+                                    ),
+                                    shape = MaterialTheme.shapes.small
                                 )
                             }
                         }
                     }
                     
                     if (job.bullets.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         job.bullets.forEach { bullet ->
                             Row(modifier = Modifier.padding(vertical = 4.dp)) {
                                 Text(
-                                    text = "•",
+                                    text = ">>",
                                     modifier = Modifier.padding(end = 8.dp),
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
                                 )
                                 Text(
                                     text = bullet,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    lineHeight = 20.sp
                                 )
                             }
                         }
                     }
                     
                     if (job.metrics.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             job.metrics.forEach { metric ->
-                                AssistChip(
-                                    onClick = {},
-                                    label = {
-                                        Text("${metric.label}: ${metric.value}")
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            Icons.Default.Add,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
+                                Surface(
+                                    shape = MaterialTheme.shapes.small,
+                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        0.5.dp, 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                    )
+                                ) {
+                                    Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                                        Text(
+                                            text = metric.label.uppercase(),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                                        )
+                                        Text(
+                                            text = metric.value,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold
                                         )
                                     }
-                                )
+                                }
                             }
                         }
                     }
@@ -200,32 +238,37 @@ fun AddJobDialog(onDismiss: () -> Unit, onConfirm: (Job) -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Job") },
+        title = { 
+            Text(
+                "NEW ASSIGNMENT",
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            ) 
+        },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Job Title") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = company, onValueChange = { company = it }, label = { Text("Company") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = period, onValueChange = { period = it }, label = { Text("Period") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = duration, onValueChange = { duration = it }, label = { Text("Duration") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = status, onValueChange = { status = it }, label = { Text("Status") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Type") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Employment Type") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = stackString, onValueChange = { stackString = it }, label = { Text("Stack (comma separated)") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = bulletsString, onValueChange = { bulletsString = it }, label = { Text("Bullets (newline separated)") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = stackString, onValueChange = { stackString = it }, label = { Text("Stack (CSV)") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = bulletsString, onValueChange = { bulletsString = it }, label = { Text("Responsibilities (Newline)") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(
                     value = metricsString,
                     onValueChange = { metricsString = it },
-                    label = { Text("Metrics (label:value, color optional, newline separated)") },
-                    placeholder = { Text("System Uptime:99.9%, accent") },
+                    label = { Text("Metrics (Label:Value, CSV)") },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         },
         confirmButton = {
-            Button(
+            TextButton(
                 onClick = {
                     val stack = stackString.split(",").map { it.trim() }.filter { it.isNotBlank() }
                     val bullets = bulletsString.split("\n").map { it.trim() }.filter { it.isNotBlank() }
@@ -240,10 +283,10 @@ fun AddJobDialog(onDismiss: () -> Unit, onConfirm: (Job) -> Unit) {
                     onConfirm(Job(title, company, period, duration, status, type, location, stack, bullets, metrics))
                 },
                 enabled = title.isNotBlank() && company.isNotBlank()
-            ) { Text("Add") }
+            ) { Text("DEPLOY") }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text("ABORT") }
         }
     )
 }

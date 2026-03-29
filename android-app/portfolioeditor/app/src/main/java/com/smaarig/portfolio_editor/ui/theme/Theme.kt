@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 enum class AppTheme {
-    Default, Catppuccin, Gruvbox, Forest, Nothing
+    Default, Catppuccin, Gruvbox, Forest, Nothing, Nord, Dracula, TokyoNight
 }
 
 private val DarkColorScheme = darkColorScheme(
@@ -54,6 +54,27 @@ private val NothingColorScheme = darkColorScheme(
     onSurface = NothingOnSurface
 )
 
+private val NordColorScheme = darkColorScheme(
+    primary = NordPrimary,
+    background = NordBackground,
+    surface = NordSurface,
+    onSurface = NordOnSurface
+)
+
+private val DraculaColorScheme = darkColorScheme(
+    primary = DraculaPrimary,
+    background = DraculaBackground,
+    surface = DraculaSurface,
+    onSurface = DraculaOnSurface
+)
+
+private val TokyoNightColorScheme = darkColorScheme(
+    primary = TokyoNightPrimary,
+    background = TokyoNightBackground,
+    surface = TokyoNightSurface,
+    onSurface = TokyoNightOnSurface
+)
+
 @Composable
 fun PortfolioeditorTheme(
     theme: AppTheme = AppTheme.Default,
@@ -66,6 +87,9 @@ fun PortfolioeditorTheme(
         AppTheme.Gruvbox -> GruvboxColorScheme
         AppTheme.Forest -> ForestColorScheme
         AppTheme.Nothing -> NothingColorScheme
+        AppTheme.Nord -> NordColorScheme
+        AppTheme.Dracula -> DraculaColorScheme
+        AppTheme.TokyoNight -> TokyoNightColorScheme
         AppTheme.Default -> {
             when {
                 dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {

@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smaarig.portfolio_editor.screens.home.sections.ErrorState
 import com.smaarig.portfolio_editor.viewmodels.education.CoursesUiState
@@ -30,16 +31,22 @@ fun CoursesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
-        }
+        },
+        containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when (val state = uiState) {
-                is CoursesUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is CoursesUiState.Loading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 2.dp
+                )
                 is CoursesUiState.Success -> CourseList(state.data, onDelete = { viewModel.deleteCourse(it) })
                 is CoursesUiState.Error -> ErrorState(state.message) { viewModel.fetchCourses() }
             }
@@ -62,7 +69,7 @@ fun CoursesScreen(
 fun CourseList(courses: List<String>, onDelete: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(courses, key = { it }) { course ->
@@ -73,15 +80,33 @@ fun CourseList(courses: List<String>, onDelete: (String) -> Unit) {
                         onClick = { },
                         onLongClick = { onDelete(course) }
                     ),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
-            ) {
-                Text(
-                    text = course,
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
+                shape = MaterialTheme.shapes.large,
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                 )
+            ) {
+                Row(
+                    modifier = Modifier.padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "•",
+                        modifier = Modifier.padding(end = 16.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = course.uppercase(),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                        letterSpacing = 1.sp
+                    )
+                }
             }
         }
     }
@@ -93,20 +118,30 @@ fun AddCourseDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Course") },
+        title = { 
+            Text(
+                "ENROLL COURSE",
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            ) 
+        },
         text = {
             OutlinedTextField(
                 value = courseName,
                 onValueChange = { courseName = it },
-                label = { Text("Course Name") },
+                label = { Text("Course Designation") },
+                shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.fillMaxWidth()
             )
         },
         confirmButton = {
-            Button(onClick = { onConfirm(courseName) }, enabled = courseName.isNotBlank()) { Text("Add") }
+            TextButton(
+                onClick = { onConfirm(courseName) }, 
+                enabled = courseName.isNotBlank()
+            ) { Text("RECORD") }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text("ABORT") }
         }
     )
 }
