@@ -31,15 +31,14 @@ fun JobsScreen(
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Jobs") },
-                actions = {
-                    IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
-                    }
-                }
-            )
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
@@ -68,48 +67,97 @@ fun JobList(jobs: List<Job>, onDelete: (Job) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         items(jobs, key = { "${it.company}_${it.title}" }) { job ->
-            Card(
-                modifier = Modifier.fillMaxWidth().combinedClickable(
-                    onClick = { },
-                    onLongClick = { onDelete(job) }
-                )
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = { onDelete(job) }
+                    ),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+                shape = MaterialTheme.shapes.large
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                    Text(text = job.company, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = job.period, style = MaterialTheme.typography.bodySmall)
-                        Badge { Text(job.status) }
-                    }
-                    
-                    Text(text = "${job.type} • ${job.location}", style = MaterialTheme.typography.bodySmall)
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Text(
+                        text = job.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = job.company,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        job.stack.forEach { tech ->
-                            SuggestionChip(onClick = {}, label = { Text(tech) })
+                        Text(
+                            text = job.period,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ) {
+                            Text(job.status, modifier = Modifier.padding(horizontal = 4.dp))
                         }
                     }
                     
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "${job.type} • ${job.location}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     
-                    job.bullets.forEach { bullet ->
-                        Text(text = "• $bullet", style = MaterialTheme.typography.bodyMedium)
+                    if (job.stack.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            job.stack.forEach { tech ->
+                                SuggestionChip(
+                                    onClick = {},
+                                    label = { Text(tech) },
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = MaterialTheme.colorScheme.surface
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    
+                    if (job.bullets.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        job.bullets.forEach { bullet ->
+                            Row(modifier = Modifier.padding(vertical = 4.dp)) {
+                                Text(
+                                    text = "•",
+                                    modifier = Modifier.padding(end = 8.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = bullet,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
                     }
                     
                     if (job.metrics.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -117,7 +165,16 @@ fun JobList(jobs: List<Job>, onDelete: (Job) -> Unit) {
                             job.metrics.forEach { metric ->
                                 AssistChip(
                                     onClick = {},
-                                    label = { Text("${metric.label}: ${metric.value}") }
+                                    label = {
+                                        Text("${metric.label}: ${metric.value}")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Default.Add,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
                                 )
                             }
                         }
@@ -149,20 +206,21 @@ fun AddJobDialog(onDismiss: () -> Unit, onConfirm: (Job) -> Unit) {
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
-                OutlinedTextField(value = company, onValueChange = { company = it }, label = { Text("Company") })
-                OutlinedTextField(value = period, onValueChange = { period = it }, label = { Text("Period") })
-                OutlinedTextField(value = duration, onValueChange = { duration = it }, label = { Text("Duration") })
-                OutlinedTextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
-                OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Type") })
-                OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location") })
-                OutlinedTextField(value = stackString, onValueChange = { stackString = it }, label = { Text("Stack (comma separated)") })
-                OutlinedTextField(value = bulletsString, onValueChange = { bulletsString = it }, label = { Text("Bullets (newline separated)") })
+                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = company, onValueChange = { company = it }, label = { Text("Company") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = period, onValueChange = { period = it }, label = { Text("Period") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = duration, onValueChange = { duration = it }, label = { Text("Duration") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = status, onValueChange = { status = it }, label = { Text("Status") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Type") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = stackString, onValueChange = { stackString = it }, label = { Text("Stack (comma separated)") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = bulletsString, onValueChange = { bulletsString = it }, label = { Text("Bullets (newline separated)") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(
                     value = metricsString,
                     onValueChange = { metricsString = it },
                     label = { Text("Metrics (label:value, color optional, newline separated)") },
-                    placeholder = { Text("System Uptime:99.9%, accent") }
+                    placeholder = { Text("System Uptime:99.9%, accent") },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         },

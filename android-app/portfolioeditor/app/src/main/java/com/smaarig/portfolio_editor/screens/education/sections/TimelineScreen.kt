@@ -28,15 +28,14 @@ fun TimelineScreen(
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Education Timeline") },
-                actions = {
-                    IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
-                    }
-                }
-            )
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
@@ -65,14 +64,17 @@ fun TimelineList(timelines: List<Timeline>, onDelete: (Timeline) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(timelines, key = { it.title }) { timeline ->
-            Card(
-                modifier = Modifier.fillMaxWidth().combinedClickable(
-                    onClick = { },
-                    onLongClick = { onDelete(timeline) }
-                )
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = { onDelete(timeline) }
+                    ),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -80,19 +82,50 @@ fun TimelineList(timelines: List<Timeline>, onDelete: (Timeline) -> Unit) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = timeline.year, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
-                        Badge { Text(timeline.status) }
+                        Text(
+                            text = timeline.year,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        ) {
+                            Text(timeline.status, modifier = Modifier.padding(horizontal = 4.dp))
+                        }
                     }
-                    Text(text = timeline.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text(text = timeline.place, style = MaterialTheme.typography.bodyMedium)
-                    Text(text = timeline.detail, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = timeline.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = timeline.place,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = timeline.detail,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     
-                    FlowRow(
-                        modifier = Modifier.padding(top = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        timeline.tags.forEach { tag ->
-                            SuggestionChip(onClick = {}, label = { Text(tag) })
+                    if (timeline.tags.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            timeline.tags.forEach { tag ->
+                                SuggestionChip(
+                                    onClick = {},
+                                    label = { Text(tag) },
+                                    shape = MaterialTheme.shapes.small
+                                )
+                            }
                         }
                     }
                 }
@@ -115,12 +148,12 @@ fun AddTimelineDialog(onDismiss: () -> Unit, onConfirm: (Timeline) -> Unit) {
         title = { Text("Add Timeline") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = year, onValueChange = { year = it }, label = { Text("Year") })
-                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
-                OutlinedTextField(value = place, onValueChange = { place = it }, label = { Text("Place") })
-                OutlinedTextField(value = detail, onValueChange = { detail = it }, label = { Text("Detail") })
-                OutlinedTextField(value = tagsString, onValueChange = { tagsString = it }, label = { Text("Tags (comma separated)") })
-                OutlinedTextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
+                OutlinedTextField(value = year, onValueChange = { year = it }, label = { Text("Year") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = place, onValueChange = { place = it }, label = { Text("Place") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = detail, onValueChange = { detail = it }, label = { Text("Detail") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = tagsString, onValueChange = { tagsString = it }, label = { Text("Tags (comma separated)") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = status, onValueChange = { status = it }, label = { Text("Status") }, modifier = Modifier.fillMaxWidth())
             }
         },
         confirmButton = {

@@ -1,23 +1,21 @@
 package com.smaarig.portfolio_editor.screens.skills.sections
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smaarig.portfolio_editor.models.skills.ProficiencyLevel
+import com.smaarig.portfolio_editor.screens.home.sections.ErrorState
 import com.smaarig.portfolio_editor.viewmodels.skills.ProficiencyLevelUiState
 import com.smaarig.portfolio_editor.viewmodels.skills.ProficiencyLevelViewModel
 
@@ -30,15 +28,14 @@ fun ProficiencyLevelsScreen(
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Proficiency Levels") },
-                actions = {
-                    IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
-                    }
-                }
-            )
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
         }
     ) { innerPadding ->
         Box(
@@ -47,26 +44,9 @@ fun ProficiencyLevelsScreen(
                 .fillMaxSize()
         ) {
             when (val state = uiState) {
-                is ProficiencyLevelUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is ProficiencyLevelUiState.Success -> {
-                    ProficiencyLevelList(
-                        levels = state.data,
-                        onDelete = { viewModel.deleteProficiencyLevel(it.label) }
-                    )
-                }
-                is ProficiencyLevelUiState.Error -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = state.message, color = MaterialTheme.colorScheme.error)
-                        Button(onClick = { viewModel.fetchProficiencyLevels() }) {
-                            Text("Retry")
-                        }
-                    }
-                }
+                is ProficiencyLevelUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is ProficiencyLevelUiState.Success -> ProficiencyLevelList(state.data, onDelete = { viewModel.deleteProficiencyLevel(it.label) })
+                is ProficiencyLevelUiState.Error -> ErrorState(state.message) { viewModel.fetchProficiencyLevels() }
             }
         }
     }
@@ -82,59 +62,61 @@ fun ProficiencyLevelsScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
-fun ProficiencyLevelList(
-    levels: List<ProficiencyLevel>,
-    onDelete: (ProficiencyLevel) -> Unit
-) {
-    if (levels.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No proficiency levels found")
-        }
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(levels, key = { it.label }) { level ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = { /* Could show details */ },
-                            onLongClick = { onDelete(level) }
-                        ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = level.label,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Surface(
-                                shape = MaterialTheme.shapes.small,
-                                color = MaterialTheme.colorScheme.primaryContainer
-                            ) {
-                                Text(
-                                    text = level.range,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
+fun ProficiencyLevelList(levels: List<ProficiencyLevel>, onDelete: (ProficiencyLevel) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(levels, key = { it.label }) { level ->
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = { onDelete(level) }
+                    ),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+                shape = MaterialTheme.shapes.large
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
-                            text = "Skills: ${level.skills.joinToString(", ")}",
-                            style = MaterialTheme.typography.bodyMedium
+                            text = level.label,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
                         )
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ) {
+                            Text(level.range, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Associated Skills",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        level.skills.forEach { skill ->
+                            SuggestionChip(
+                                onClick = {},
+                                label = { Text(skill) }
+                            )
+                        }
                     }
                 }
             }
@@ -143,10 +125,7 @@ fun ProficiencyLevelList(
 }
 
 @Composable
-fun AddProficiencyLevelDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (ProficiencyLevel) -> Unit
-) {
+fun AddProficiencyLevelDialog(onDismiss: () -> Unit, onConfirm: (ProficiencyLevel) -> Unit) {
     var label by remember { mutableStateOf("") }
     var range by remember { mutableStateOf("") }
     var color by remember { mutableStateOf("") }
@@ -157,30 +136,10 @@ fun AddProficiencyLevelDialog(
         title = { Text("Add Proficiency Level") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = label,
-                    onValueChange = { label = it },
-                    label = { Text("Label (e.g., Expert)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = range,
-                    onValueChange = { range = it },
-                    label = { Text("Range (e.g., 80-100)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = color,
-                    onValueChange = { color = it },
-                    label = { Text("Color (e.g., var(--accent2))") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = skillsText,
-                    onValueChange = { skillsText = it },
-                    label = { Text("Skills (comma separated)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Label (e.g., Expert)") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = range, onValueChange = { range = it }, label = { Text("Range (e.g., 80-100)") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = color, onValueChange = { color = it }, label = { Text("Color (e.g., var(--accent2))") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = skillsText, onValueChange = { skillsText = it }, label = { Text("Skills (comma separated)") }, modifier = Modifier.fillMaxWidth())
             }
         },
         confirmButton = {
@@ -190,14 +149,10 @@ fun AddProficiencyLevelDialog(
                     onConfirm(ProficiencyLevel(label, range, color, skills))
                 },
                 enabled = label.isNotBlank() && range.isNotBlank()
-            ) {
-                Text("Add")
-            }
+            ) { Text("Add") }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
+            TextButton(onClick = onDismiss) { Text("Cancel") }
         }
     )
 }

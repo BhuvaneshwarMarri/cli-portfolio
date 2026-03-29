@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smaarig.portfolio_editor.models.skills.SkillGroup
 import com.smaarig.portfolio_editor.models.skills.SkillItem
+import com.smaarig.portfolio_editor.screens.home.sections.ErrorState
 import com.smaarig.portfolio_editor.viewmodels.skills.SkillGroupUiState
 import com.smaarig.portfolio_editor.viewmodels.skills.SkillGroupViewModel
 
@@ -31,15 +32,14 @@ fun SkillGroupsScreen(
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Skill Groups") },
-                actions = {
-                    IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
-                    }
-                }
-            )
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
         }
     ) { innerPadding ->
         Box(
@@ -48,26 +48,9 @@ fun SkillGroupsScreen(
                 .fillMaxSize()
         ) {
             when (val state = uiState) {
-                is SkillGroupUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is SkillGroupUiState.Success -> {
-                    SkillGroupList(
-                        groups = state.data,
-                        onDelete = { viewModel.deleteSkillGroup(it.title) }
-                    )
-                }
-                is SkillGroupUiState.Error -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = state.message, color = MaterialTheme.colorScheme.error)
-                        Button(onClick = { viewModel.fetchSkillGroups() }) {
-                            Text("Retry")
-                        }
-                    }
-                }
+                is SkillGroupUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is SkillGroupUiState.Success -> SkillGroupList(state.data, onDelete = { viewModel.deleteSkillGroup(it.title) })
+                is SkillGroupUiState.Error -> ErrorState(state.message) { viewModel.fetchSkillGroups() }
             }
         }
     }
@@ -85,50 +68,41 @@ fun SkillGroupsScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SkillGroupList(
-    groups: List<SkillGroup>,
-    onDelete: (SkillGroup) -> Unit
-) {
-    if (groups.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No skill groups found")
-        }
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(groups, key = { it.title }) { group ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = { },
-                            onLongClick = { onDelete(group) }
-                        ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = group.title,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
+fun SkillGroupList(groups: List<SkillGroup>, onDelete: (SkillGroup) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(groups, key = { it.title }) { group ->
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = { onDelete(group) }
+                    ),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+                shape = MaterialTheme.shapes.large
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = group.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    group.skills.forEach { skill ->
+                        ListItem(
+                            headlineContent = { Text(skill.name, fontWeight = FontWeight.Medium) },
+                            trailingContent = {
+                                Badge(containerColor = MaterialTheme.colorScheme.secondaryContainer) {
+                                    Text("${skill.level} (${skill.tag})", modifier = Modifier.padding(horizontal = 4.dp))
+                                }
+                            },
+                            colors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        group.skills.forEach { skill ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(text = skill.name, style = MaterialTheme.typography.bodyMedium)
-                                Text(
-                                    text = "${skill.level} (${skill.tag})",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -136,17 +110,11 @@ fun SkillGroupList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddSkillGroupDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (SkillGroup) -> Unit
-) {
+fun AddSkillGroupDialog(onDismiss: () -> Unit, onConfirm: (SkillGroup) -> Unit) {
     var title by remember { mutableStateOf("") }
     var icon by remember { mutableStateOf("") }
     var color by remember { mutableStateOf("") }
-    
-    // Skill items management
     val skills = remember { mutableStateListOf<SkillItem>() }
     var newSkillName by remember { mutableStateOf("") }
     var newSkillLevel by remember { mutableStateOf("") }
@@ -157,22 +125,17 @@ fun AddSkillGroupDialog(
         title = { Text("Add Skill Group") },
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
-                OutlinedTextField(value = icon, onValueChange = { icon = it }, label = { Text("Icon") })
-                OutlinedTextField(value = color, onValueChange = { color = it }, label = { Text("Color") })
-                
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = icon, onValueChange = { icon = it }, label = { Text("Icon") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = color, onValueChange = { color = it }, label = { Text("Color") }, modifier = Modifier.fillMaxWidth())
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 Text("Add Skills:", style = MaterialTheme.typography.titleSmall)
-                
-                OutlinedTextField(value = newSkillName, onValueChange = { newSkillName = it }, label = { Text("Skill Name") })
-                OutlinedTextField(value = newSkillLevel, onValueChange = { newSkillLevel = it }, label = { Text("Level") })
-                OutlinedTextField(value = newSkillTag, onValueChange = { newSkillTag = it }, label = { Text("Tag") })
-                
+                OutlinedTextField(value = newSkillName, onValueChange = { newSkillName = it }, label = { Text("Skill Name") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = newSkillLevel, onValueChange = { newSkillLevel = it }, label = { Text("Level") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = newSkillTag, onValueChange = { newSkillTag = it }, label = { Text("Tag") }, modifier = Modifier.fillMaxWidth())
                 Button(
                     onClick = {
                         if (newSkillName.isNotBlank()) {
@@ -181,11 +144,7 @@ fun AddSkillGroupDialog(
                         }
                     },
                     modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Add Skill")
-                }
-                
-                // List of added skills
+                ) { Text("Add Skill") }
                 skills.forEachIndexed { index, skill ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -201,14 +160,7 @@ fun AddSkillGroupDialog(
             }
         },
         confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm(SkillGroup(title, icon, color, skills.toList()))
-                },
-                enabled = title.isNotBlank()
-            ) {
-                Text("Confirm")
-            }
+            Button(onClick = { onConfirm(SkillGroup(title, icon, color, skills.toList())) }, enabled = title.isNotBlank()) { Text("Confirm") }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text("Cancel") }
