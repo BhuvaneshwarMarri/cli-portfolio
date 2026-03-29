@@ -1,0 +1,93 @@
+[{
+  "_id": {
+    "$oid": "69beae78554688920e89fcff"
+  },
+  "type": "home_data",
+  "commands": [
+    {
+      "cmd": ":theme catppuccin",
+      "desc": "Catppuccin"
+    },
+    {
+      "cmd": ":theme dracula",
+      "desc": "Dracula"
+    },
+    {
+      "cmd": ":theme nord",
+      "desc": "Nord"
+    },
+    {
+      "cmd": ":theme gruvbox",
+      "desc": "Gruvbox"
+    },
+    {
+      "cmd": ":theme tokyo",
+      "desc": "Tokyo Night"
+    },
+    {
+      "cmd": ":theme nothing",
+      "desc": "Nothing OS"
+    },
+    {
+      "cmd": ":font",
+      "desc": "cycle font"
+    },
+    {
+      "cmd": ":font+ / :font-",
+      "desc": "resize"
+    },
+    {
+      "cmd": ":q",
+      "desc": "exit bvim",
+      "active": true
+    }
+  ],
+  "interests": [
+    {
+      "icon": "⬡",
+      "text": "Full-Stack Web Development"
+    },
+    {
+      "icon": "◈",
+      "text": "Android Development"
+    },
+    {
+      "icon": "⌘",
+      "text": "Agentic AI Systems"
+    },
+    {
+      "icon": "λ",
+      "text": "DSA"
+    }
+  ],
+  "links": [
+    {
+      "icon": "◈",
+      "label": "github",
+      "href": "https://github.com/BhuvaneshwarMarri",
+      "val": "BhuvaneshwarMarri",
+      "active": true
+    },
+    {
+      "icon": "⬡",
+      "label": "linkedin",
+      "href": "https://www.linkedin.com/in/bhuvaneshwar-marri",
+      "val": "linkedin.com/in/bhuvan",
+      "active": true
+    },
+    {
+      "icon": "@",
+      "label": "email",
+      "href": "mailto:bhuvaneshwarmarri@gmail.com",
+      "val": "bhuvaneshwarmarri@gmail.com",
+      "active": false
+    },
+    {
+      "icon": "✦",
+      "label": "instagram",
+      "href": "https://www.instagram.com/marri.bhuvaneshwar?igsh=azhndjlvcHVjZWZr",
+      "val": "marri.bhuvaneshwar",
+      "active": false
+    }
+  ]
+}]

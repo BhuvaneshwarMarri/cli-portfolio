@@ -1,18 +1,125 @@
 package com.smaarig.portfolio_editor.screens.home.sections
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.smaarig.portfolio_editor.models.home.Link
+import com.smaarig.portfolio_editor.viewmodels.home.LinksUiState
+import com.smaarig.portfolio_editor.viewmodels.home.LinksViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LinksScreen(
+    viewModel: LinksViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    var showAddDialog by remember { mutableStateOf(false) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Links") },
+                actions = {
+                    IconButton(onClick = { showAddDialog = true }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            when (val state = uiState) {
+                is LinksUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                is LinksUiState.Success -> LinkList(state.data, onDelete = { viewModel.deleteLink(it.label) })
+                is LinksUiState.Error -> ErrorState(state.message) { viewModel.fetchLinks() }
+            }
+        }
+    }
+
+    if (showAddDialog) {
+        AddLinkDialog(
+            onDismiss = { showAddDialog = false },
+            onConfirm = {
+                viewModel.addLink(it)
+                showAddDialog = false
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun LinkList(links: List<Link>, onDelete: (Link) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(links, key = { it.label }) { link ->
+            Card(
+                modifier = Modifier.fillMaxWidth().combinedClickable(
+                    onClick = { },
+                    onLongClick = { onDelete(link) }
+                )
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = link.label, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        if (link.active) {
+                            Badge { Text("Active") }
+                        }
+                    }
+                    Text(text = link.value, style = MaterialTheme.typography.bodyMedium)
+                    Text(text = link.href, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                }
+            }
+        }
+    }
+}
 
 @Composable
-fun LinksScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Links Screen")
-    }
+fun AddLinkDialog(onDismiss: () -> Unit, onConfirm: (Link) -> Unit) {
+    var icon by remember { mutableStateOf("") }
+    var label by remember { mutableStateOf("") }
+    var href by remember { mutableStateOf("") }
+    var value by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(true) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add Link") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(value = icon, onValueChange = { icon = it }, label = { Text("Icon") })
+                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Label") })
+                OutlinedTextField(value = href, onValueChange = { href = it }, label = { Text("URL (href)") })
+                OutlinedTextField(value = value, onValueChange = { value = it }, label = { Text("Value") })
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = active, onCheckedChange = { active = it })
+                    Text("Active")
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = { onConfirm(Link(icon, label, href, value, active)) }, enabled = label.isNotBlank()) { Text("Add") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        }
+    )
 }

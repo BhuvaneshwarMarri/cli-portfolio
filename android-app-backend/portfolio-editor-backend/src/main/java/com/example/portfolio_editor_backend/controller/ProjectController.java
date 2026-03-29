@@ -4,7 +4,6 @@ import com.example.portfolio_editor_backend.models.Project;
 import com.example.portfolio_editor_backend.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController

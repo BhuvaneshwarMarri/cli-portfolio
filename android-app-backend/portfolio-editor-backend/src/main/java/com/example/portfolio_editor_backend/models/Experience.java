@@ -1,8 +1,10 @@
 package com.example.portfolio_editor_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.List;
 
 @Data
@@ -10,7 +12,11 @@ import java.util.List;
 public class Experience {
     @Id
     private String id;
+    
     private List<Job> jobs;
+    
+    @Field("skill_matrix")
+    @JsonProperty("skill_matrix")
     private List<SkillMatrixItem> skillMatrix;
 
     @Data
@@ -37,7 +43,7 @@ public class Experience {
     @Data
     public static class SkillMatrixItem {
         private String label;
-        private String level;
+        private Object level; // Changed to Object to handle both String and Integer
         private String color;
     }
 }

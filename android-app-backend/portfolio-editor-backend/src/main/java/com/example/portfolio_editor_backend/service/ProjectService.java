@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor // Automatically injects the repository via constructor
+@RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository repository;
 

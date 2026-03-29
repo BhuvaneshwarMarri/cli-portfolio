@@ -9,7 +9,5 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Project {
     @Id
     private String id;
-    private String title;
-    private String description;
-    private String imageUrl;
+    private String projectName;
 }

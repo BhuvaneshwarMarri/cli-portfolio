@@ -13,15 +13,25 @@ public class SkillsService {
     private final SkillsRepository repository;
 
     private Skills getOrCreateSkills() {
+        // Try to find by type "skills_data" as per your structure
         List<Skills> skillsList = repository.findAll();
-        if (skillsList.isEmpty()) {
-            Skills newSkills = new Skills();
-            newSkills.setProficiencyLevels(new ArrayList<>());
-            newSkills.setSkillGroups(new ArrayList<>());
-            newSkills.setTechStack(new ArrayList<>());
-            return repository.save(newSkills);
+        for (Skills s : skillsList) {
+            if ("skills_data".equals(s.getType())) {
+                return s;
+            }
         }
-        return skillsList.get(0);
+        
+        // Fallback or Create New
+        if (!skillsList.isEmpty()) {
+            return skillsList.get(0);
+        }
+
+        Skills newSkills = new Skills();
+        newSkills.setType("skills_data");
+        newSkills.setProficiencyLevels(new ArrayList<>());
+        newSkills.setSkillGroups(new ArrayList<>());
+        newSkills.setTechStack(new ArrayList<>());
+        return repository.save(newSkills);
     }
 
     // Proficiency Levels
@@ -31,6 +41,7 @@ public class SkillsService {
 
     public Skills.ProficiencyLevel addProficiencyLevel(Skills.ProficiencyLevel level) {
         Skills skills = getOrCreateSkills();
+        if (skills.getProficiencyLevels() == null) skills.setProficiencyLevels(new ArrayList<>());
         skills.getProficiencyLevels().add(level);
         repository.save(skills);
         return level;
@@ -38,8 +49,10 @@ public class SkillsService {
 
     public void deleteProficiencyLevel(String label) {
         Skills skills = getOrCreateSkills();
-        skills.getProficiencyLevels().removeIf(l -> l.getLabel().equals(label));
-        repository.save(skills);
+        if (skills.getProficiencyLevels() != null) {
+            skills.getProficiencyLevels().removeIf(l -> label.equals(l.getLabel()));
+            repository.save(skills);
+        }
     }
 
     // Skill Groups
@@ -49,6 +62,7 @@ public class SkillsService {
 
     public Skills.SkillGroup addSkillGroup(Skills.SkillGroup group) {
         Skills skills = getOrCreateSkills();
+        if (skills.getSkillGroups() == null) skills.setSkillGroups(new ArrayList<>());
         skills.getSkillGroups().add(group);
         repository.save(skills);
         return group;
@@ -56,8 +70,10 @@ public class SkillsService {
 
     public void deleteSkillGroup(String title) {
         Skills skills = getOrCreateSkills();
-        skills.getSkillGroups().removeIf(g -> g.getTitle().equals(title));
-        repository.save(skills);
+        if (skills.getSkillGroups() != null) {
+            skills.getSkillGroups().removeIf(g -> title.equals(g.getTitle()));
+            repository.save(skills);
+        }
     }
 
     // Tech Stack
@@ -67,6 +83,7 @@ public class SkillsService {
 
     public String addTechStackItem(String item) {
         Skills skills = getOrCreateSkills();
+        if (skills.getTechStack() == null) skills.setTechStack(new ArrayList<>());
         if (!skills.getTechStack().contains(item)) {
             skills.getTechStack().add(item);
             repository.save(skills);
@@ -76,7 +93,9 @@ public class SkillsService {
 
     public void deleteTechStackItem(String item) {
         Skills skills = getOrCreateSkills();
-        skills.getTechStack().remove(item);
-        repository.save(skills);
+        if (skills.getTechStack() != null) {
+            skills.getTechStack().remove(item);
+            repository.save(skills);
+        }
     }
 }
