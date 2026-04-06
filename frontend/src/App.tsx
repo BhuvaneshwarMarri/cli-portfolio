@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import TerminalView from "./components/TerminalView";
-import BvimView     from "./components/BvimView";
+import TerminalView from "./components/terminal/TerminalView.tsx";
+import BvimView     from "./components/bvim/BvimView";
 import type { ThemeName, HistoryLine } from "./portfolioTypes";
 
 export default function App() {

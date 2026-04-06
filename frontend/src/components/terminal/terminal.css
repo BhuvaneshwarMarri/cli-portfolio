@@ -1,0 +1,55 @@
+.trm-root {
+    background : var(--bg,          #1e1e2e);
+    color      : var(--text,        #cdd6f4);
+    font-family: var(--font-family, 'JetBrains Mono', 'Fira Code', monospace);
+    font-size  : var(--font-size,   15px);
+    padding    : 2rem;
+    min-height : 100vh;
+    cursor     : text;
+    overflow-y : auto;
+    line-height: 1.7;
+    box-sizing : border-box;
+  }
+  .trm-banner {
+    color        : var(--accent, #89b4fa);
+    font-family  : monospace;
+    font-size    : 0.72rem;
+    line-height  : 1.2;
+    margin-bottom: 2rem;
+    opacity      : 0.9;
+    overflow-x   : auto;
+    white-space  : pre;
+  }
+  .trm-line {
+    margin                : 0.12rem 0;
+    white-space           : pre;
+    font-variant-ligatures: none;
+    animation             : trm-fadein 0.12s ease-out;
+  }
+  @keyframes trm-fadein {
+    from { opacity: 0; transform: translateX(-3px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .trm-prompt      { margin-top: 1rem; }
+  .trm-prompt-line { display: flex; align-items: center; margin: 0.12rem 0; }
+  .trm-input-text  { color: var(--text, #cdd6f4); margin-left: 0.3rem; }
+  .trm-cursor {
+    display: inline-block; width: 0.55rem; height: 1.1rem;
+    background: var(--cursor, #89b4fa);
+    margin-left: 0.15rem; vertical-align: text-bottom;
+    transition: opacity 0.08s ease;
+  }
+  .trm-c-accent { color: var(--accent,   #89b4fa); }
+  .trm-c-green  { color: var(--accent2,  #a6e3a1); }
+  .trm-c-red    { color: var(--accent3,  #f38ba8); }
+  .trm-c-dim    { color: var(--text-dim, #6c7086); }
+  .trm-bold     { font-weight: 700; }
+  .trm-hidden-input { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .trm-root::-webkit-scrollbar       { width: 6px; }
+  .trm-root::-webkit-scrollbar-track { background: var(--bg-sidebar, #181825); }
+  .trm-root::-webkit-scrollbar-thumb { background: var(--selection, #45475a); border-radius: 3px; }
+  .trm-root::-webkit-scrollbar-thumb:hover { background: var(--border-dim, #313244); }
+  .trm-root ::selection { background: var(--selection, #45475a); color: var(--text, #cdd6f4); }
+  @media (max-width: 768px) { .trm-root { padding: 1.5rem; } .trm-banner { font-size: 0.58rem; } }
+  @media (max-width: 480px) { .trm-root { padding: 1rem; }   .trm-banner { font-size: 0.48rem; } }
+  @media (prefers-reduced-motion: reduce) { .trm-line, .trm-cursor { animation: none; transition: none; } }

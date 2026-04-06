@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SectionBox from "../../../components/SectionBox";
+import SectionBox from "../../../components/common/SectionBox.tsx";
 
 interface ProfileStats {
   repositories: number;

@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
-import BvimLayout from "../../components/BvimLayout";
-import SectionBox from "../../components/SectionBox";
+import BvimLayout from "../../components/layout/BvimLayout.tsx";
+import SectionBox from "../../components/common/SectionBox.tsx";
 import { type FormState, type FormData } from './constants'
-import {sendViaEmailJS} from './helper'
+import {sendViaEmailJS} from './helpers.ts'
 import "./contact.css"
 
 

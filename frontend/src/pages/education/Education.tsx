@@ -1,5 +1,5 @@
-import BvimLayout from "../../components/BvimLayout";
-import SectionBox from "../../components/SectionBox";
+import BvimLayout from "../../components/layout/BvimLayout.tsx";
+import SectionBox from "../../components/common/SectionBox.tsx";
 import './education.css'
 import { TimelineItem } from "./components/TimelineItem";
 import useEducationData from "./useEducationData"; 

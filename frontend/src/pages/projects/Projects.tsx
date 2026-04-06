@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import BvimLayout from "../../components/BvimLayout";
-import SectionBox from "../../components/SectionBox";
+import BvimLayout from "../../components/layout/BvimLayout.tsx";
+import SectionBox from "../../components/common/SectionBox.tsx";
 // Fix 1: Ensure STATS type is correctly inferred or exported
 import { fetchGithubProjects, STATS, type Project } from "./fetchGithubProjects";
 import { ProfileCard, RepoRow } from "./components/helper";

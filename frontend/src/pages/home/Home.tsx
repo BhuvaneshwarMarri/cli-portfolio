@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import BvimLayout from "../../components/BvimLayout";
-import SectionBox from "../../components/SectionBox";
+import BvimLayout from "../../components/layout/BvimLayout.tsx";
+import SectionBox from "../../components/common/SectionBox.tsx";
 import useHomeData from "./useHomeData";
 import { CmdRow, Field } from "./components/helper";
 import "./home.css";

@@ -1,5 +1,5 @@
-import BvimLayout from "../../components/BvimLayout";
-import SectionBox from "../../components/SectionBox";
+import BvimLayout from "../../components/layout/BvimLayout.tsx";
+import SectionBox from "../../components/common/SectionBox.tsx";
 import { SkillRow } from "./components/SkillRow";
 import './skills.css'
 import useSkillsData from "./useSkillsData";
