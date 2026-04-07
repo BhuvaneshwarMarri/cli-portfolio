@@ -4,7 +4,7 @@
     height: 100%;
     gap: 14px;
     color: var(--text);
-    font-family: var(--font-family, 'JetBrains Mono', monospace);
+    font-family: var(--font-family, monospace);
     overflow: hidden;
 }
 
@@ -26,7 +26,7 @@
   line-height:1.15;
   margin:0 0 10px 0;
   white-space:pre;
-  font-family:monospace;
+  font-family:var(--font-family,monospace);
 }
 
 .hm-banner-meta{
@@ -70,7 +70,7 @@
   opacity:1;
   flex-shrink:0;
   letter-spacing:-0.5px;
-  font-family:monospace;
+  font-family:var(--font-family,monospace);
 }
 
 .hm-grid{

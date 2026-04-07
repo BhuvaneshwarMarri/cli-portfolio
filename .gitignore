@@ -91,3 +91,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### My updates ###
+.portfolio_data/
+.idea/

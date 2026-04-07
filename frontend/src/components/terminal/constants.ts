@@ -79,9 +79,12 @@ export const THEMES: Record<ThemeName, Record<string, string>> = {
 export const FONTS = [
   { name: "JetBrains Mono", css: "'JetBrains Mono', monospace" },
   { name: "Fira Code",      css: "'Fira Code', monospace" },
-  { name: "Courier New",    css: "'Courier New', monospace" },
   { name: "IBM Plex Mono",  css: "'IBM Plex Mono', monospace" },
   { name: "Source Code Pro",css: "'Source Code Pro', monospace" },
+  { name: "Roboto Mono",    css: "'Roboto Mono', monospace" },
+  { name: "Inconsolata",    css: "'Inconsolata', monospace" },
+  { name: "Space Mono",     css: "'Space Mono', monospace" },
+  { name: "Courier New",    css: "'Courier New', monospace" },
 ];
 
 // ─── Props ────────────────────────────────────────────────────────────────────

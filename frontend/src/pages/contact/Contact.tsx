@@ -55,7 +55,7 @@ export default function Contact() {
         flexDirection: "column",
         height       : "100%",
         color        : "var(--text)",
-        fontFamily   : "var(--font-family, 'JetBrains Mono', monospace)",
+        fontFamily   : "var(--font-family, monospace)",
         overflow     : "hidden",
       }}>
 
@@ -65,7 +65,7 @@ export default function Contact() {
             <div>
               <pre style={{
                 color: "var(--accent)", fontSize: "clamp(4px, 0.75vw, 10px)",
-                lineHeight: 1.15, margin: "0 0 8px 0", whiteSpace: "pre", fontFamily: "monospace",
+                lineHeight: 1.15, margin: "0 0 8px 0", whiteSpace: "pre", fontFamily: "var(--font-family, monospace)",
               }}>{`\
   ██████╗ ██████╗ ███╗   ██╗████████╗ █████╗  ██████╗████████╗
  ██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔══██╗██╔════╝╚══██╔══╝

@@ -5,7 +5,7 @@
   flex-direction:column;
   height:100%;
   color:var(--text);
-  font-family:var(--font-family,'JetBrains Mono',monospace);
+  font-family:var(--font-family,monospace);
   overflow:hidden;
 }
 

@@ -3,7 +3,7 @@
 import type { HistoryLine, ThemeName } from "../../portfolioTypes.ts";
 import { THEMES, FONTS } from "./constants.ts";
 
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const API = import.meta.env.VITE_API_URL;
 
 // ─── HistoryLine builders ─────────────────────────────────────────────────────
 
@@ -173,9 +173,9 @@ async function fetchSkillsLines(): Promise<HistoryLine[]> {
 // ─── projects ─────────────────────────────────────────────────────────────────
 // Endpoint: /projects, /projects/stats
 
-const LANGUAGE_COLORS: Record<string, string> = {
-  TypeScript: "#3178c6", JavaScript: "#f7df1e", Python: "#3572A5",
-};
+// const LANGUAGE_COLORS: Record<string, string> = {
+//   TypeScript: "#3178c6", JavaScript: "#f7df1e", Python: "#3572A5",
+// };
 
 function timeAgo(dateStr: string): string {
   const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86_400_000);
@@ -241,7 +241,7 @@ async function fetchExperienceLines(): Promise<HistoryLine[]> {
 
   return jobs.flatMap(job => {
     const statusMark = job.status === "ACTIVE" ? LB : LA;
-    const statusText = job.status === "ACTIVE" ? "● Current" : "○ Past";
+    // const statusText = job.status === "ACTIVE" ? "● Current" : "○ Past";
 
     return [
       statusMark(`  ─── ${job.title} ── [${job.status === "ACTIVE" ? "Current" : "Past"}] ──`),

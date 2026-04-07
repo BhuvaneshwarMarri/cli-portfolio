@@ -35,7 +35,7 @@ export default function SectionBox({ title, children, style }: SectionBoxProps) 
           letterSpacing: "0.08em",
           padding: "0 8px",
           lineHeight: "1.2",
-          fontFamily: "var(--font-family, 'JetBrains Mono', monospace)",
+          fontFamily: "var(--font-family, monospace)",
           zIndex: 2,
           textTransform: "uppercase"
         }}>
