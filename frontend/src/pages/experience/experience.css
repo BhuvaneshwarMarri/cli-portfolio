@@ -20,13 +20,12 @@
 }
 
 .exp-ascii{
-    font-size: clamp(4px, 0.7vw, 9px);
-    line-height: 1.1;
+    color: var(--accent);
+    font-size: clamp(4px, 0.75vw, 10px);
+    line-height: 1.15;
     margin: 0 0 8px 0;
     white-space: pre;
     font-family: var(--font-family, monospace);
-    color: var(--accent);
-    opacity: 0.8;
 }
 
 .exp-subtitle {
