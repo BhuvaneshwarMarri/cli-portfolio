@@ -117,7 +117,7 @@ export default function Contact() {
             style={{ display: "flex", flexDirection: "column", minHeight: 0, margin: 0 }}
           >
             {/* Setup hint banner */}
-            <div style={{
+            {/* <div style={{
               marginBottom: "12px",
               padding     : "8px 10px",
               borderRadius: "4px",
@@ -126,11 +126,11 @@ export default function Contact() {
               fontSize    : "0.73em",
               color       : "var(--accent3)",
               lineHeight  : 1.5,
-            }}>
-              ⚠ &nbsp;Replace <code style={{ color: "var(--accent)", fontFamily: "inherit" }}>EMAILJS_*</code> constants at the top of this file with your{" "}
+            }}> */}
+              {/* ⚠ &nbsp;Replace <code style={{ color: "var(--accent)", fontFamily: "inherit" }}>EMAILJS_*</code> constants at the top of this file with your{" "}
               <a href="https://www.emailjs.com/" target="_blank" rel="noopener noreferrer"
                 style={{ color: "var(--accent)", textDecoration: "underline" }}>EmailJS</a> credentials to enable sending.
-            </div>
+            </div> */}
 
             <form
               ref={formRef}
