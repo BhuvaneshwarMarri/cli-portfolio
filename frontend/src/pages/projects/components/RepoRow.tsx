@@ -228,37 +228,42 @@ export function RepoRow({
         )}
 
         {/* Stars */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
+        {/* <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.72 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" />
           </svg>
           <span>{p.stars}</span>
-        </div>
+        </div> */}
 
         {/* Forks */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
+        {/* <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
             <path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
           </svg>
           <span>{p.forks}</span>
-        </div>
+        </div> */}
 
         {/* Watchers */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
+        {/* <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="curre  {/* <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.72 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" />
+          </svg>
+          <span>{p.stars}</span>
+        </div>ntColor">
             <path d="M8 2c1.981 0 3.671.992 4.933 2.078 1.23 1.065 2.461 2.424 2.97 3.423.363.674.465 1.422 0 2.198-.508.999-1.74 2.358-2.97 3.423C11.671 13.008 9.981 14 8 14c-1.981 0-3.671-.992-4.933-2.078C1.837 10.857.606 9.499.097 8.5c-.363-.674-.465-1.422 0-2.198.508-.999 1.74-2.358 2.97-3.423C4.329 2.992 6.019 2 8 2zm0 1.5c-1.665 0-3.059.627-4.134 1.526-.953.827-1.925 1.908-2.353 2.835-.196.364-.196.944 0 1.308.428.927 1.4 2.008 2.353 2.835C4.941 12.373 6.335 13 8 13c1.665 0 3.059-.627 4.134-1.526.953-.827 1.925-1.908 2.353-2.835.196-.364.196-.944 0-1.308-.428-.927-1.4-2.008-2.353-2.835C11.059 4.127 9.665 3.5 8 3.5zm0 2.5A1.5 1.5 0 108 9 1.5 1.5 0 008 6zm0 1a.5.5 0 110 1 .5.5 0 010-1z" />
           </svg>
           <span>{p.watchers}</span>
-        </div>
+        </div> */}
 
         {/* Issues */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
+        {/* <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
             <path fillRule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z" />
           </svg>
           <span>{p.open_issues}</span>
-        </div>
+        </div> */}
 
         {/* Size */}
         <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8em", color: "var(--text-dim)" }}>

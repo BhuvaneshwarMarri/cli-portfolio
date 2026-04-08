@@ -13,7 +13,7 @@ export default function Experience() {
       <div className="experience-container">
 
         {/* ── HEADER ──────────────────────────────────────────────────────── */}
-        <SectionBox title="~/work_history">
+        <SectionBox title="">
           <div className="exp-header">
             <div className="exp-header-content">
               <pre className="exp-ascii">
@@ -33,7 +33,7 @@ export default function Experience() {
                 </span>
               </p>
             </div>
-            <div style={{ textAlign: "right", flexShrink: 0 }}>
+            <div className="exp-total-container">
               <div className="exp-total-years">1.2 YRS</div>
               <div className="exp-total-label">TOTAL EXP</div>
             </div>

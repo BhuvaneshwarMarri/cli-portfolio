@@ -32,6 +32,13 @@
     opacity: 0.8;
 }
 
+.exp-subtitle {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.82em;
+    letter-spacing: 0.02em;
+}
+
 /* Right top experience box */
 .exp-total-container{
   text-align:right;

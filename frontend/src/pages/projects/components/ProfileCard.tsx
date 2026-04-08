@@ -1,35 +1,90 @@
 import { useEffect, useState } from "react";
 import SectionBox from "../../../components/common/SectionBox.tsx";
 
-interface ProfileStats {
+interface ProfileData {
+  avatar_url: string;
+  name: string;
+  login: string;
+  bio: string;
+  location: string;
   repositories: number;
   open_source: number;
   total_stars: number;
   total_forks: number;
+  followers: number;
+  following: number;
+  html_url: string;
 }
+
+interface LanguageBreakdown {
+  lang: string;
+  percentage: number;
+  count: number;
+}
+
+const LANGUAGE_COLORS: Record<string, string> = {
+  TypeScript:         "#3178c6",
+  JavaScript:         "#f1e05a",
+  Python:             "#3572A5",
+  Rust:               "#dea584",
+  Go:                 "#00ADD8",
+  Java:               "#b07219",
+  "C++":              "#f34b7d",
+  Ruby:               "#701516",
+  Swift:              "#F05138",
+  Kotlin:             "#A97BFF",
+  CSS:                "#563d7c",
+  HTML:               "#e34c26",
+  PowerShell:         "#012456",
+  "Jupyter Notebook": "#DA5B0B",
+  Dockerfile:         "#384d54",
+  Shell:              "#89e051",
+  Makefile:           "#427819",
+  JSON:               "#292929",
+  YAML:               "#cb171e",
+  Other:              "#6c7086",
+};
 
 export function ProfileCard() {
   const contributions = [2, 5, 3, 7, 4, 6, 1, 8, 5, 3, 6, 2, 7, 4, 8, 5, 3, 6, 2, 7, 4, 5, 8, 3];
 
-  const [stats, setStats] = useState<ProfileStats | null>(null);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [languages, setLanguages] = useState<LanguageBreakdown[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
-    fetch("http://localhost:8000/projects/stats")
+    
+    // Fetch full GitHub profile with all repos stats and avatar
+    fetch("http://localhost:8000/projects/profile")
       .then(res => res.json())
       .then(data => {
-        if (isMounted) setStats(data);
+        if (isMounted) setProfile(data);
       })
-      .catch(err => console.error("[ProfileCard] stats fetch failed:", err));
+      .catch(err => console.error("[ProfileCard] profile fetch failed:", err));
+    
+    // Fetch language breakdown from all repos
+    fetch("http://localhost:8000/skills/breakdown")
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted) {
+          setLanguages(data || []);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        console.error("[ProfileCard] language breakdown fetch failed:", err);
+        setLoading(false);
+      });
     
     return () => { isMounted = false; };
   }, []);
 
   const statItems = [
-    { label: "Repos",  value: stats ? String(stats.repositories) : "…", color: "var(--accent)"  },
-    { label: "Stars",  value: stats ? String(stats.total_stars)  : "…", color: "var(--accent3)" },
-    { label: "Forks",  value: stats ? String(stats.total_forks)  : "…", color: "var(--text-dim)" },
-    { label: "OSS",    value: stats ? String(stats.open_source)  : "…", color: "var(--accent2)" },
+    { label: "Repos",  value: profile ? String(profile.repositories) : "…", color: "var(--accent)"  },
+    { label: "Stars",  value: profile ? String(profile.total_stars)  : "…", color: "var(--accent3)" },
+    { label: "Forks",  value: profile ? String(profile.total_forks)  : "…", color: "var(--text-dim)" },
+    { label: "OSS",    value: profile ? String(profile.open_source)  : "…", color: "var(--accent2)" },
   ];
 
   return (
@@ -37,35 +92,51 @@ export function ProfileCard() {
 
       {/* Avatar + name */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
-        <div style={{
-          width          : "40px",
-          height         : "40px",
-          borderRadius   : "50%",
-          background     : "color-mix(in srgb, var(--accent) 20%, var(--bg-sidebar))",
-          border         : "1px solid var(--border-dim)",
-          display        : "flex",
-          alignItems     : "center",
-          justifyContent : "center",
-          fontSize       : "1.1em",
-          fontWeight     : 700,
-          color          : "var(--accent)",
-          flexShrink     : 0,
-        }}>
-          B
-        </div>
+        {profile?.avatar_url ? (
+          <img
+            src={profile.avatar_url}
+            alt={profile.name || profile.login}
+            style={{
+              width:          "40px",
+              height:         "40px",
+              borderRadius:   "50%",
+              border:         "1px solid var(--border-dim)",
+              flexShrink:     0,
+              objectFit:      "cover",
+            }}
+          />
+        ) : (
+          <div style={{
+            width          : "40px",
+            height         : "40px",
+            borderRadius   : "50%",
+            background     : "color-mix(in srgb, var(--accent) 20%, var(--bg-sidebar))",
+            border         : "1px solid var(--border-dim)",
+            display        : "flex",
+            alignItems     : "center",
+            justifyContent : "center",
+            fontSize       : "1.1em",
+            fontWeight     : 700,
+            color          : "var(--accent)",
+            flexShrink     : 0,
+          }}>
+            {profile?.name?.[0]?.toUpperCase() || "?"}
+          </div>
+        )}
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: "0.88em" }}>Bhuvaneshwar Marri</div>
+          <div style={{ fontWeight: 700, fontSize: "0.88em" }}>
+            {profile?.name || profile?.login || "GitHub User"}
+          </div>
           
-          {/* FIXED: Added missing 'a' tag name */}
           <a 
-            href="https://github.com/BhuvaneshwarMarri"
+            href={profile?.html_url || "https://github.com"}
             target="_blank"
             rel="noopener noreferrer"
             style={{ fontSize: "0.74em", color: "var(--accent)", textDecoration: "none" }}
             onMouseEnter={e => (e.currentTarget.style.textDecoration = "underline")}
             onMouseLeave={e => (e.currentTarget.style.textDecoration = "none")}
           >
-            @BhuvaneshwarMarri
+            @{profile?.login || "username"}
           </a>
         </div>
         <svg viewBox="0 0 16 16" width="18" height="18" fill="var(--text-dim)" style={{ marginLeft: "auto", opacity: 0.4, flexShrink: 0 }}>
@@ -115,31 +186,42 @@ export function ProfileCard() {
         <div style={{ fontSize: "0.68em", color: "var(--text-dim)", opacity: 0.6, marginBottom: "6px" }}>
           Top languages
         </div>
-        {[
-          { lang: "TypeScript", pct: 45, color: "#3178c6" },
-          { lang: "Python",     pct: 30, color: "#3572A5" },
-          { lang: "JavaScript", pct: 20, color: "#f7df1e" },
-          { lang: "Other",      pct: 5,  color: "#6c7086" },
-        ].map(l => (
-          <div key={l.lang} style={{ marginBottom: "5px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72em", marginBottom: "2px" }}>
-              <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: l.color, display: "inline-block" }} />
-                <span style={{ color: "var(--text-dim)" }}>{l.lang}</span>
-              </span>
-              <span style={{ color: "var(--text-dim)", opacity: 0.7 }}>{l.pct}%</span>
+        {loading ? (
+          <div style={{ fontSize: "0.72em", color: "var(--text-dim)", opacity: 0.6 }}>Loading…</div>
+        ) : languages.length > 0 ? (
+          languages.map(l => (
+            <div key={l.lang} style={{ marginBottom: "5px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72em", marginBottom: "2px" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <span style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    background: LANGUAGE_COLORS[l.lang] || LANGUAGE_COLORS["Other"],
+                    display: "inline-block",
+                  }} />
+                  <span style={{ color: "var(--text-dim)" }}>{l.lang}</span>
+                </span>
+                <span style={{ color: "var(--text-dim)", opacity: 0.7 }}>{l.percentage}%</span>
+              </div>
+              <div style={{ height: "4px", borderRadius: "2px", background: "var(--border-dim)", overflow: "hidden" }}>
+                <div style={{
+                  height: "100%",
+                  width: `${l.percentage}%`,
+                  background: LANGUAGE_COLORS[l.lang] || LANGUAGE_COLORS["Other"],
+                  borderRadius: "2px",
+                }} />
+              </div>
             </div>
-            <div style={{ height: "4px", borderRadius: "2px", background: "var(--border-dim)", overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${l.pct}%`, background: l.color, borderRadius: "2px" }} />
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div style={{ fontSize: "0.72em", color: "var(--text-dim)", opacity: 0.6 }}>No languages found</div>
+        )}
       </div>
 
       {/* View profile link */}
-      {/* FIXED: Added missing 'a' tag name */}
       <a 
-        href="https://github.com/BhuvaneshwarMarri"
+        href={profile?.html_url || "https://github.com"}
         target="_blank"
         rel="noopener noreferrer"
         style={{
