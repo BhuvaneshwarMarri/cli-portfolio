@@ -1,5 +1,6 @@
 /**
- * Contact module types
+ * Contact module — shared types.
+ * Single source of truth; import from here everywhere.
  */
 
 export interface SocialLink {
@@ -38,6 +39,7 @@ export interface ContactSubmissionResponse {
   status: string;
   id: string;
   message: string;
+  email_sent: boolean;
 }
 
 export type FormState = "idle" | "sending" | "success" | "error";

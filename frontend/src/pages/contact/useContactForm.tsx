@@ -1,40 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiGet, apiPost } from "../../utils/api";
-
-/**
- * Contact information interfaces
- */
-interface SocialLink {
-  url: string;
-  handle: string;
-}
-
-interface ContactInfo {
-  email: string;
-  github: SocialLink;
-  linkedin: SocialLink;
-  twitter: SocialLink;
-}
-
-interface Availability {
-  status: string;
-  type: string;
-  timezone: string;
-  response_time: string;
-  preferred_contact: string;
-}
-
-interface OpenToItem {
-  text: string;
-  active: boolean;
-}
-
-interface FormData {
-  from_name: string;
-  from_email: string;
-  subject: string;
-  message: string;
-}
+// BUG FIX #8: Import shared types from the single source of truth (types.ts).
+// Duplicate interface declarations were removed — they drifted from types.ts and
+// could produce silent type mismatches at runtime.
+import type {
+  ContactInfo,
+  Availability,
+  OpenToItem,
+  ContactFormData,
+} from "./types";
 
 interface ContactDataHook {
   contactInfo: ContactInfo | null;
@@ -42,12 +16,12 @@ interface ContactDataHook {
   openTo: OpenToItem[];
   loading: boolean;
   error: string | null;
-  submitForm: (formData: FormData) => Promise<{ success: boolean; message: string }>;
+  submitForm: (formData: ContactFormData) => Promise<{ success: boolean; message: string }>;
 }
 
 /**
- * Custom hook for contact page data fetching and form submission
- * Fetches contact info, availability, and opportunities from backend
+ * Custom hook for contact page data fetching and form submission.
+ * Fetches contact info, availability, and opportunities from the backend API.
  */
 export default function useContactData(): ContactDataHook {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
@@ -57,6 +31,8 @@ export default function useContactData(): ContactDataHook {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -68,49 +44,54 @@ export default function useContactData(): ContactDataHook {
         ]);
 
         if (!infoRes.success || !availRes.success || !openRes.success) {
-          throw new Error(infoRes.error || availRes.error || openRes.error || "Unknown error");
+          throw new Error(
+            infoRes.error ?? availRes.error ?? openRes.error ?? "Unknown error"
+          );
         }
 
-        setContactInfo(infoRes.data || null);
-        setAvailability(availRes.data || null);
-        setOpenTo(openRes.data || []);
+        if (cancelled) return;
+
+        setContactInfo(infoRes.data ?? null);
+        setAvailability(availRes.data ?? null);
+        setOpenTo(openRes.data ?? []);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
+        if (cancelled) return;
+        const message = err instanceof Error ? err.message : "Failed to load contact data";
         console.error("Contact data fetch error:", err);
-        setError(err.message || "Failed to load contact data");
+        setError(message);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchData();
+    // Cleanup: ignore stale async results if the component unmounts
+    return () => { cancelled = true; };
   }, []);
 
   /**
-   * Submit contact form to backend
-   * Stores message in MongoDB and optionally sends email via service
+   * Submit contact form to backend.
+   * Stores message in MongoDB and sends email via backend service.
    */
-  const submitForm = async (
-    formData: FormData
-  ): Promise<{ success: boolean; message: string }> => {
-    try {
+  const submitForm = useCallback(
+    async (formData: ContactFormData): Promise<{ success: boolean; message: string }> => {
       const response = await apiPost<{ status: string; message: string }>(
         "/contact",
         formData
       );
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to submit form");
+        throw new Error(response.error ?? "Failed to submit form");
       }
 
       return {
         success: true,
-        message: response.data?.message || "Message submitted successfully",
+        message: response.data?.message ?? "Message submitted successfully",
       };
-    } catch (err: any) {
-      throw new Error(err.message || "Failed to submit form");
-    }
-  };
+    },
+    []
+  );
 
   return {
     contactInfo,
