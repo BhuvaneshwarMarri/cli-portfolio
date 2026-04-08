@@ -22,56 +22,69 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Shell:      "#89e051",
 };
 
-const STATUS_OVERRIDES: Record<string, Status> = {
-  // "sg-games-platform": "In Progress",
-};
-
-function inferStatus(name: string, topics: string[]): Status {
-  if (STATUS_OVERRIDES[name])         return STATUS_OVERRIDES[name];
-  if (topics.includes("research"))    return "Research";
-  if (topics.includes("in-progress")) return "In Progress";
-  return "Active";
-}
-
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diff / 86_400_000);
-  if (days === 0) return "today";
-  if (days === 1) return "yesterday";
-  if (days < 7)  return `${days} days ago`;
-  if (days < 14) return "1 week ago";
-  if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
-  if (days < 60) return "1 month ago";
-  return `${Math.floor(days / 30)} months ago`;
-}
 
 // ── Exported mutable constants ─────────────────────────────────────────────
 export let PROJECTS: Project[] = [];
 export let STATS: { label: string; value: string; color: string }[] = [];
 
 export interface Project {
-  name:        string;
-  owner:       string;
-  description: string;
-  language:    string;
-  langColor:   string;
-  stars:       number;
-  status:      Status;
-  visibility:  string;
-  topics:      string[];
-  updatedAgo:  string;
-  href:        string;
+  id:           number;
+  name:         string;
+  full_name:    string;
+  owner:        string;
+  owner_avatar: string;
+  description:  string;
+  language:     string;
+  langColor:    string;
+  stars:        number;
+  watchers:     number;
+  forks:        number;
+  open_issues:  number;
+  size:         number;
+  status:       Status;
+  visibility:   string;
+  topics:       string[];
+  homepage:     string | null;
+  license:      string | null;
+  created_at:   string;
+  updated_at:   string;
+  pushed_at:    string;
+  is_fork:      boolean;
+  archived:     boolean;
+  has_wiki:     boolean;
+  has_pages:    boolean;
+  href:         string;
 }
 
 interface GithubRepoResponse {
-  name: string;
-  description: string | null;
-  language: string ;
-  stars: number;
-  topics: string[];
-  visibility: string;
-  updated_at: string;
-  url: string;
+  id:            number;
+  name:          string;
+  full_name:     string;
+  owner:         string;
+  owner_avatar:  string;
+  description:   string | null;
+  language:      string;
+  stars:         number;
+  watchers:      number;
+  forks:         number;
+  open_issues:   number;
+  network_count: number;
+  size:          number;
+  topics:        string[];
+  visibility:    string;
+  status:        Status;
+  created_at:    string;
+  updated_at:    string;
+  pushed_at:     string;
+  homepage:      string | null;
+  license:       string | null;
+  url:           string;
+  is_fork:       boolean;
+  archived:      boolean;
+  disabled:      boolean;
+  has_wiki:      boolean;
+  has_pages:     boolean;
+  is_template:   boolean;
 }
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
@@ -90,17 +103,32 @@ export async function fetchGithubProjects() {
   const statsData = await statsRes.json();
 
   PROJECTS = repos.map((r: GithubRepoResponse): Project => ({
-    name:        r.name,
-    owner:       "BhuvaneshwarMarri",           // or add owner to backend response
-    description: r.description ?? "",
-    language:    r.language ?? "Unknown",
-    langColor:   LANGUAGE_COLORS[r.language] ?? "#8b8b8b",
-    stars:       r.stars,
-    status:      inferStatus(r.name, r.topics ?? []),
-    visibility:  r.visibility,
-    topics:      r.topics ?? [],
-    updatedAgo:  timeAgo(r.updated_at),
-    href:        r.url,
+    id:           r.id,
+    name:         r.name,
+    full_name:    r.full_name,
+    owner:        r.owner,
+    owner_avatar: r.owner_avatar,
+    description:  r.description ?? "",
+    language:     r.language ?? "Unknown",
+    langColor:    LANGUAGE_COLORS[r.language] ?? "#8b8b8b",
+    stars:        r.stars,
+    watchers:     r.watchers,
+    forks:        r.forks,
+    open_issues:  r.open_issues,
+    size:         r.size,
+    status:       r.status,
+    visibility:   r.visibility,
+    topics:       r.topics ?? [],
+    homepage:     r.homepage,
+    license:      r.license,
+    created_at:   r.created_at,
+    updated_at:   r.updated_at,
+    pushed_at:    r.pushed_at,
+    is_fork:      r.is_fork,
+    archived:     r.archived,
+    has_wiki:     r.has_wiki,
+    has_pages:    r.has_pages,
+    href:         r.url,
   }));
 
   STATS = [

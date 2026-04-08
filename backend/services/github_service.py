@@ -2,8 +2,17 @@
 import httpx
 from backend.config import settings
 from backend.cache.cache import get_cached, set_cached
+from datetime import datetime
 
 CACHE_KEY = f"github:repos:{settings.github_username}"
+
+def infer_status(repo_name: str, topics: list) -> str:
+    """Infer project status from topics and repo name."""
+    if any(topic in ["research", "experimental"] for topic in topics):
+        return "Research"
+    if any(topic in ["in-progress", "wip", "development"] for topic in topics):
+        return "In Progress"
+    return "Active"
 
 async def get_repos() -> list[dict]:
     cached = await get_cached(CACHE_KEY)
@@ -26,23 +35,36 @@ async def get_repos() -> list[dict]:
         response.raise_for_status()
         raw = response.json()
 
-    # SELECTED_REPOS = {
-    #     "cli-portfolio",
-    #     "sg-games-platform",
-    #     "agentic-ai-tools",
-    #     "devops-automation",
-    # }
-
     repos = [
         {
-            "name":        r["name"],
-            "description": r["description"] or "",
-            "stars":       r["stargazers_count"],
-            "language":    r["language"] or "Unknown",
-            "url":         r["html_url"],
-            "visibility":  "Public" if not r["private"] else "Private",
-            "updated_at":  r["updated_at"],
-            "topics":      r.get("topics", []),
+            "id":            r["id"],
+            "name":          r["name"],
+            "full_name":     r["full_name"],
+            "owner":         r["owner"]["login"],
+            "owner_avatar":  r["owner"]["avatar_url"],
+            "description":   r["description"] or "",
+            "url":           r["html_url"],
+            "homepage":      r["homepage"] or None,
+            "visibility":    "Public" if not r["private"] else "Private",
+            "language":      r["language"] or "Unknown",
+            "license":       r["license"]["name"] if r["license"] else None,
+            "stars":         r["stargazers_count"],
+            "watchers":      r["watchers_count"],
+            "forks":         r["forks_count"],
+            "open_issues":   r["open_issues_count"],
+            "network_count": r["network_count"] if "network_count" in r else r["forks_count"],
+            "size":          r["size"],
+            "topics":        r.get("topics", []),
+            "status":        infer_status(r["name"], r.get("topics", [])),
+            "created_at":    r["created_at"],
+            "updated_at":    r["updated_at"],
+            "pushed_at":     r["pushed_at"],
+            "is_fork":       r["fork"],
+            "archived":      r["archived"],
+            "disabled":      r["disabled"],
+            "has_wiki":      r["has_wiki"],
+            "has_pages":     r["has_pages"],
+            "is_template":   r.get("is_template", False),
         }
         for r in raw
     ]
