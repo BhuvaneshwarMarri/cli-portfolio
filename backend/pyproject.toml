@@ -11,6 +11,8 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "redis[asyncio]>=7.4.0",
     "tinydb>=4.8.2",
+    "aiosmtplib>=3.0.2",
+    "email-validator>=2.1.1",
 ]
 
 [dependency-groups]

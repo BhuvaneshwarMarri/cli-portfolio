@@ -2,10 +2,8 @@ import { useState, useRef } from "react";
 import BvimLayout from "../../components/layout/BvimLayout.tsx";
 import SectionBox from "../../components/common/SectionBox.tsx";
 import { type FormState, type FormData } from './constants'
-import {sendViaEmailJS} from './helpers.ts'
 import useContactData from './useContactForm'
 import "./contact.css"
-
 
 export default function Contact() {
   const [form, setForm] = useState<FormData>({
@@ -17,42 +15,77 @@ export default function Contact() {
   const [status, setStatus] = useState<FormState>("idle");
   const [errMsg, setErrMsg] = useState("");
   const [focused, setFocused] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Set<string>>(new Set());
   const formRef = useRef<HTMLFormElement>(null);
+
+  // For Textarea Cursor tracking
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [msgCaretPos, setMsgCaretPos] = useState(0);
+  const [msgScrollTop, setMsgScrollTop] = useState(0);
 
   const { contactInfo, availability, openTo, loading, submitForm } = useContactData();
 
+  const updateMsgCaret = () => {
+    if (textareaRef.current) {
+      setMsgCaretPos(textareaRef.current.selectionStart || 0);
+    }
+  };
+
+  const handleMsgScroll = () => {
+    if (textareaRef.current) {
+      setMsgScrollTop(textareaRef.current.scrollTop);
+    }
+  };
+
+  // Sync textarea caret on programmatic form resets - avoid cascading renders by skipping effect
+  // Caret position is tracked in onChange, onKeyUp, and onClick handlers
+
   const handleChange = (field: keyof FormData) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm(f => ({ ...f, [field]: e.target.value }));
+      // Clear error for this field when user starts typing
+      if (fieldErrors.has(field)) {
+        const newErrors = new Set(fieldErrors);
+        newErrors.delete(field);
+        setFieldErrors(newErrors);
+      }
+    };
 
   const handleSubmit = async () => {
-    if (!form.from_name.trim() || !form.from_email.trim() || !form.message.trim()) {
+    const errors = new Set<string>();
+    if (!form.from_name.trim()) errors.add("from_name");
+    if (!form.from_email.trim()) errors.add("from_email");
+    if (!form.message.trim()) errors.add("message");
+    
+    if (errors.size > 0) {
+      setFieldErrors(errors);
       setErrMsg("E: Required fields missing — name, email and message are required.");
       setStatus("error");
       return;
     }
+    
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRe.test(form.from_email)) {
+      setFieldErrors(new Set(["from_email"]));
       setErrMsg("E: Invalid email address format.");
       setStatus("error");
       return;
     }
-
+    
+    setFieldErrors(new Set());
     setStatus("sending");
     setErrMsg("");
 
     try {
-      // Send to backend first (stores in MongoDB)
+      // Send to backend (stores in MongoDB and sends email)
       await submitForm(form);
-      
-      // Then send via EmailJS for email notification
-      await sendViaEmailJS(form);
       
       setStatus("success");
       setForm({ from_name: "", from_email: "", subject: "", message: "" });
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       setStatus("error");
-      setErrMsg(`E: Send failed — ${err.message || "unknown error"}. Check your config.`);
+      const errorMessage = err instanceof Error ? err.message : "unknown error";
+      setErrMsg(`E: Send failed — ${errorMessage}. Check your backend config.`);
     }
   };
 
@@ -116,22 +149,6 @@ export default function Contact() {
             title="✉ send_message.sh"
             style={{ display: "flex", flexDirection: "column", minHeight: 0, margin: 0 }}
           >
-            {/* Setup hint banner */}
-            {/* <div style={{
-              marginBottom: "12px",
-              padding     : "8px 10px",
-              borderRadius: "4px",
-              background  : "color-mix(in srgb, var(--accent3) 8%, transparent)",
-              border      : "1px solid color-mix(in srgb, var(--accent3) 30%, transparent)",
-              fontSize    : "0.73em",
-              color       : "var(--accent3)",
-              lineHeight  : 1.5,
-            }}> */}
-              {/* ⚠ &nbsp;Replace <code style={{ color: "var(--accent)", fontFamily: "inherit" }}>EMAILJS_*</code> constants at the top of this file with your{" "}
-              <a href="https://www.emailjs.com/" target="_blank" rel="noopener noreferrer"
-                style={{ color: "var(--accent)", textDecoration: "underline" }}>EmailJS</a> credentials to enable sending.
-            </div> */}
-
             <form
               ref={formRef}
               style={{ display: "flex", flexDirection: "column", gap: "0", flex: 1 }}
@@ -149,6 +166,7 @@ export default function Contact() {
                 onFocus={() => setFocused("from_name")}
                 onBlur={() => setFocused(null)}
                 required
+                hasError={fieldErrors.has("from_name") && status === "error"}
               />
 
               <PromptField
@@ -161,6 +179,7 @@ export default function Contact() {
                 onFocus={() => setFocused("from_email")}
                 onBlur={() => setFocused(null)}
                 required
+                hasError={fieldErrors.has("from_email") && status === "error"}
               />
 
               <PromptField
@@ -174,115 +193,231 @@ export default function Contact() {
                 onBlur={() => setFocused(null)}
               />
 
-              {/* Message textarea */}
+              {/* Message textarea - terminal styled */}
               <div style={{
-                borderBottom: `1px solid ${focused === "message" ? "var(--accent)" : "var(--border-dim)"}`,
-                padding     : "10px 0",
-                transition  : "border-color 0.15s",
-                flex        : 1,
-                display     : "flex",
+                borderBottom: fieldErrors.has("message") && status === "error" ? "1px solid var(--accent3)" : `1px solid ${focused === "message" ? "var(--accent)" : "var(--border-dim)"}`,
+                paddingBottom: "4px",
+                marginBottom: "8px",
+                transition: "border-color 0.15s ease, box-shadow 0.15s ease",
+                boxShadow: fieldErrors.has("message") && status === "error" ? "0 0 0 1px var(--accent3)" : "none",
+                flex: 1,
+                display: "flex",
                 flexDirection: "column",
-                minHeight   : 0,
+                minHeight: 0,
               }}>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flex: 1, minHeight: 0 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flex: 1, minHeight: 0, position: "relative" }}>
                   <span style={{
-                    color    : focused === "message" ? "var(--accent)" : "var(--accent3)",
-                    fontSize : "0.78em",
-                    minWidth : "60px",
-                    paddingTop: "2px",
+                    color: fieldErrors.has("message") && status === "error" ? "var(--accent3)" : focused === "message" ? "var(--accent)" : "var(--accent3)",
+                    fontSize: "0.78em",
+                    minWidth: "60px",
+                    paddingTop: "4px",
                     flexShrink: 0,
-                    transition: "color 0.15s",
+                    transition: "color 0.15s ease",
                     fontWeight: 600,
+                    userSelect: "none",
                   }}>
-                    $ message
+                    {fieldErrors.has("message") && status === "error" ? "✗ message" : "$ message"}
                   </span>
-                  <textarea
-                    placeholder="Write your message here..."
-                    value={form.message}
-                    onChange={handleChange("message")}
-                    onFocus={() => setFocused("message")}
-                    onBlur={() => setFocused(null)}
-                    required
-                    style={{
-                      flex      : 1,
-                      minHeight : "100px",
-                      resize    : "none",
-                      background: "transparent",
-                      border    : "none",
-                      outline   : "none",
-                      color     : "var(--text)",
-                      fontFamily: "var(--font-family)",
-                      fontSize  : "0.88em",
-                      lineHeight: 1.7,
-                      caretColor: "var(--accent)",
-                      padding   : "0",
-                    }}
-                  />
+                  
+                  <div style={{ flex: 1, display: "flex", position: "relative", minHeight: 0 }}>
+                    {/* Hidden Mirror Div to trace text and correctly position block cursor */}
+                    {focused === "message" && (
+                      <div aria-hidden="true" style={{
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+                        pointerEvents: "none",
+                        overflow: "hidden",
+                        width: "100%"
+                      }}>
+                        <div style={{
+                          paddingLeft: "8px",
+                          paddingRight: "12px",
+                          fontFamily: "var(--font-family, monospace)",
+                          fontSize: "0.86em",
+                          lineHeight: 1.7,
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-word",
+                          color: "transparent",
+                          transform: `translateY(${-msgScrollTop}px)`,
+                          display: "inline-block"
+                        }}>
+                          {form.message.substring(0, msgCaretPos)}
+                          <span className="tui-bold-cursor" style={{
+                            display: "inline-block",
+                            width: "8px",
+                            height: "1.2em",
+                            background: fieldErrors.has("message") && status === "error" ? "var(--accent3)" : "var(--accent)",
+                            borderRadius: "1px",
+                            animation: "tui-cursor-blink 0.8s step-end infinite",
+                            boxShadow: `0 0 6px ${fieldErrors.has("message") && status === "error" ? "var(--accent3)" : "var(--accent)"}`,
+                            verticalAlign: "text-bottom",
+                            marginLeft: "2px",
+                            flexShrink: 0
+                          }} />
+                        </div>
+                      </div>
+                    )}
+
+                    <textarea
+                      ref={textareaRef}
+                      placeholder="write your message here..."
+                      value={form.message}
+                      onChange={(e) => { handleChange("message")(e); updateMsgCaret(); }}
+                      onKeyUp={updateMsgCaret}
+                      onClick={updateMsgCaret}
+                      onFocus={() => { setFocused("message"); updateMsgCaret(); }}
+                      onBlur={() => setFocused(null)}
+                      onScroll={handleMsgScroll}
+                      required
+                      style={{
+                        flex: 1,
+                        minHeight: "100px",
+                        resize: "none",
+                        background: "transparent",
+                        border: "none",
+                        outline: "none",
+                        color: "var(--text)",
+                        fontFamily: "var(--font-family, monospace)",
+                        fontSize: "0.86em",
+                        lineHeight: 1.7,
+                        caretColor: "transparent",
+                        paddingLeft: "8px",
+                        paddingRight: "12px",
+                        paddingTop: "0",
+                        paddingBottom: "0",
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Status / Error message */}
-              {(status === "error" || status === "success") && (
+              {/* Terminal output section */}
+              <div style={{
+                paddingTop: "12px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}>
                 <div style={{
-                  margin    : "10px 0",
-                  padding   : "8px 12px",
-                  borderRadius: "4px",
-                  fontSize  : "0.8em",
-                  lineHeight: 1.5,
-                  border    : `1px solid ${status === "success" ? "var(--accent2)" : "var(--accent3)"}`,
-                  color     : status === "success" ? "var(--accent2)" : "var(--accent3)",
-                  background: status === "success"
-                    ? "color-mix(in srgb, var(--accent2) 8%, transparent)"
-                    : "color-mix(in srgb, var(--accent3) 8%, transparent)",
+                  fontSize: "0.82em",
+                  color: "var(--text-dim)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontWeight: 600,
                 }}>
-                  {status === "success"
-                    ? "✓ Message sent successfully! I'll get back to you within 24–48 hrs."
-                    : errMsg || "An error occurred. Please try again."}
+                  <span style={{ color: "var(--accent3)" }}>$</span>
+                  <span>send_message</span>
+                  {status === "sending" && (
+                    <span style={{
+                      animation: "terminal-pulse 0.8s ease-in-out infinite",
+                      color: "var(--accent2)",
+                    }}>
+                      ⟳
+                    </span>
+                  )}
                 </div>
-              )}
+
+                {status === "success" && (
+                  <div style={{
+                    padding: "8px 12px",
+                    background: "color-mix(in srgb, var(--accent2) 10%, transparent)",
+                    border: "1px solid var(--accent2)",
+                    borderRadius: "3px",
+                    fontSize: "0.78em",
+                    color: "var(--accent2)",
+                    lineHeight: 1.6,
+                    fontFamily: "var(--font-family, monospace)",
+                  }}>
+                    <div>✓ success: message accepted</div>
+                    <div style={{ fontSize: "0.9em", color: "var(--text-dim)", marginTop: "4px" }}>
+                      → processing... I'll respond within 24–48 hrs
+                    </div>
+                  </div>
+                )}
+
+                {status === "error" && (
+                  <div style={{
+                    padding: "8px 12px",
+                    background: "color-mix(in srgb, var(--accent3) 10%, transparent)",
+                    border: "1px solid var(--accent3)",
+                    borderRadius: "3px",
+                    fontSize: "0.78em",
+                    color: "var(--accent3)",
+                    lineHeight: 1.6,
+                    fontFamily: "var(--font-family, monospace)",
+                  }}>
+                    <div>✗ error: {errMsg}</div>
+                  </div>
+                )}
+
+                {status === "sending" && (
+                  <div style={{
+                    padding: "8px 12px",
+                    background: "color-mix(in srgb, var(--accent) 5%, transparent)",
+                    border: "1px solid var(--border-dim)",
+                    borderRadius: "3px",
+                    fontSize: "0.78em",
+                    color: "var(--text-dim)",
+                    lineHeight: 1.6,
+                    fontFamily: "var(--font-family, monospace)",
+                    animation: "terminal-progress 0.6s linear infinite",
+                  }}>
+                    ⟳ sending message via backend...
+                  </div>
+                )}
+              </div>
 
               {/* Submit button */}
-              <div style={{ paddingTop: "12px", display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ paddingTop: "8px", display: "flex", alignItems: "center", gap: "10px" }}>
                 <button
                   type="submit"
-                  disabled={status === "sending"}
+                  disabled={status === "sending" || status === "success"}
                   style={{
-                    padding     : "8px 20px",
-                    background  : status === "sending"
-                      ? "color-mix(in srgb, var(--accent) 15%, transparent)"
-                      : "color-mix(in srgb, var(--accent) 18%, transparent)",
-                    border      : `1px solid ${status === "sending" ? "var(--border-dim)" : "var(--accent)"}`,
-                    borderRadius: "4px",
-                    color       : status === "sending" ? "var(--text-dim)" : "var(--accent)",
-                    fontFamily  : "var(--font-family)",
-                    fontSize    : "0.84em",
-                    fontWeight  : 700,
-                    cursor      : status === "sending" ? "not-allowed" : "pointer",
-                    letterSpacing: "0.05em",
-                    transition  : "all 0.15s",
-                    display     : "flex",
-                    alignItems  : "center",
-                    gap         : "6px",
+                    padding: "6px 16px",
+                    background: status === "sending" ? "transparent" : "color-mix(in srgb, var(--accent) 12%, transparent)",
+                    border: `1px solid ${status === "sending" ? "var(--border-dim)" : status === "success" ? "var(--accent2)" : "var(--accent)"}`,
+                    borderRadius: "2px",
+                    color: status === "sending" ? "var(--text-dim)" : status === "success" ? "var(--accent2)" : "var(--accent)",
+                    fontFamily: "var(--font-family)",
+                    fontSize: "0.78em",
+                    fontWeight: 700,
+                    cursor: status === "sending" || status === "success" ? "not-allowed" : "pointer",
+                    letterSpacing: "0.04em",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    opacity: status === "sending" || status === "success" ? 0.6 : 1,
                   }}
-                  onMouseEnter={e => {
-                    if (status !== "sending") {
-                      (e.currentTarget as HTMLElement).style.background = "color-mix(in srgb, var(--accent) 28%, transparent)";
+                  onMouseEnter={(e) => {
+                    if (status !== "sending" && status !== "success") {
+                      e.currentTarget.style.background = "color-mix(in srgb, var(--accent) 22%, transparent)";
+                      e.currentTarget.style.boxShadow = "0 0 8px color-mix(in srgb, var(--accent) 30%, transparent)";
                     }
                   }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.background = "color-mix(in srgb, var(--accent) 18%, transparent)";
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "color-mix(in srgb, var(--accent) 12%, transparent)";
+                    e.currentTarget.style.boxShadow = "none";
                   }}
                 >
                   {status === "sending" ? (
-                    <><Spinner /> Sending...</>
+                    <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <span style={{ animation: "terminal-spin 0.8s linear infinite" }}>⟳</span> sending
+                    </span>
+                  ) : status === "success" ? (
+                    <span style={{ display: "flex", alignItems: "center", gap: "4px", color: "var(--accent2)" }}>
+                      <span>✓</span> sent
+                    </span>
                   ) : (
-                    <>:send_message ↵</>
+                    <span>: send_message</span>
                   )}
                 </button>
 
-                <span style={{ fontSize: "0.74em", color: "var(--text-dim)", opacity: 0.6 }}>
-                  powered by EmailJS
-                </span>
+                {status !== "sending" && status !== "success" && (
+                  <span style={{ fontSize: "0.7em", color: "var(--text-dim)", fontWeight: 600 }}>↵</span>
+                )}
               </div>
 
             </form>
@@ -290,7 +425,6 @@ export default function Contact() {
 
           {/* ── RIGHT PANEL: Contact info + availability ───────────────────── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "14px", minHeight: 0 }}>
-
             {/* Contact Links */}
             <SectionBox title="Contact Info" style={{ margin: 0 }}>
               {loading ? (
@@ -354,104 +488,169 @@ export default function Contact() {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function PromptField({ prompt, type, placeholder, value, onChange, isFocused, onFocus, onBlur, required = false }: {
+function PromptField({ prompt, type, placeholder, value, onChange, isFocused, onFocus, onBlur, required = false, hasError = false }: {
   prompt: string; type: string; placeholder: string; value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
-  isFocused: boolean; onFocus: () => void; onBlur: () => void; required?: boolean;
+  isFocused: boolean; onFocus: () => void; onBlur: () => void; required?: boolean; hasError?: boolean;
 }) {
+  const [caretPos, setCaretPos] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const updateCaret = () => {
+    if (inputRef.current) {
+      setCaretPos(inputRef.current.selectionStart || 0);
+    }
+  };
+
+  const handleScroll = () => {
+    if (inputRef.current) {
+      setScrollLeft(inputRef.current.scrollLeft);
+    }
+  };
+
+  // Caret position is synced in onChange, onKeyUp, and onClick handlers - avoid cascading renders
+
   return (
-  <div className="prompt-container">
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      borderBottom: hasError ? "1px solid var(--accent3)" : `1px solid ${isFocused ? "var(--accent)" : "var(--border-dim)"}`,
+      paddingBottom: "4px",
+      marginBottom: "8px",
+      transition: "border-color 0.15s ease, box-shadow 0.15s ease",
+      boxShadow: hasError ? "0 0 0 1px var(--accent3)" : "none",
+      position: "relative",
+      gap: "10px",
+    }}>
+      <span style={{
+        fontSize: "0.78em",
+        fontWeight: 600,
+        color: hasError ? "var(--accent3)" : isFocused ? "var(--accent)" : "var(--accent3)",
+        minWidth: "60px",
+        transition: "color 0.15s ease",
+        userSelect: "none",
+      }}>
+        {hasError ? "✗" : "$"} {prompt.replace("$ ", "")}
+        {required && <span style={{ color: "var(--accent3)", marginLeft: "2px" }}>*</span>}
+      </span>
 
-    <span className={`prompt-label ${isFocused ? "focus" : "blur"}`}>
-      {prompt}
-      {required && <span className="required-star">*</span>}
-    </span>
+      <div style={{ flex: 1, display: "flex", position: "relative", overflow: "hidden" }}>
+        
+        {/* Invisible Mirror Div for native cursor tracking */}
+        {isFocused && (
+          <div aria-hidden="true" style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            pointerEvents: "none",
+            overflow: "hidden",
+            maxWidth: "100%"
+          }}>
+            <div style={{
+              paddingLeft: "8px",
+              paddingRight: "8px",
+              fontFamily: "var(--font-family, monospace)",
+              fontSize: "0.86em",
+              lineHeight: 1.5,
+              color: "transparent",
+              whiteSpace: "nowrap",
+              display: "inline-flex",
+              alignItems: "center",
+              transform: `translateX(${Math.min(0, value.length > 20 ? -scrollLeft : 0)}px)`
+            }}>
+              {value.substring(0, caretPos)}
+              <span className="tui-bold-cursor" style={{
+                width: "8px",
+                height: "16px",
+                background: hasError ? "var(--accent3)" : "var(--accent)",
+                borderRadius: "1px",
+                animation: "tui-cursor-blink 0.8s step-end infinite",
+                boxShadow: `0 0 6px ${hasError ? "var(--accent3)" : "var(--accent)"}`,
+                display: "inline-block",
+                flexShrink: 0,
+                marginLeft: "2px"
+              }} />
+            </div>
+          </div>
+        )}
 
-    <input
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      className="prompt-input"
-    />
-
-    {isFocused && <span className="caret" />}
-
-  </div>
-);
+        <input
+          ref={inputRef}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => { onChange(e); updateCaret(); }}
+          onKeyUp={updateCaret}
+          onClick={updateCaret}
+          onFocus={() => { onFocus(); updateCaret(); }}
+          onBlur={onBlur}
+          onScroll={handleScroll}
+          style={{
+            flex: 1,
+            background: "transparent",
+            border: "none",
+            outline: "none",
+            color: "var(--text)",
+            fontFamily: "var(--font-family, monospace)",
+            fontSize: "0.86em",
+            caretColor: "transparent",
+            paddingLeft: "8px",
+            lineHeight: 1.5,
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
-function Spinner() {
-  const frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-  const [frame, setFrame] = useState(0);
-  // rotate frames
-  // (use interval in a real setup; for simplicity just show static)
-  return <span>{frames[frame]}</span>;
-}
-
-function InfoRow({ label, value, active = false, valueColor }: {
+function InfoRow({ label, value, active = false }: {
   label: string; value: string; active?: boolean; valueColor?: string;
 }) {
   return(
-<div className="info-row">
-
-<span className="info-label">
-$ {label}
-</span>
-
-<span className={`info-value ${active?"info-active":""}`}>
-{value}
-</span>
-
-</div>
-);
-  
+    <div className="info-row">
+      <span className="info-label">
+        $ {label}
+      </span>
+      <span className={`info-value ${active ? "info-active" : ""}`}>
+        {value}
+      </span>
+    </div>
+  );
 }
 
 function LinkRow({ icon, label, href, val, active = false }: {
   icon: string; label: string; href: string; val: string; active?: boolean;
 }) {
-        return(
-
-      <div className="link-row">
-
-      <span className={`link-icon ${active?"link-icon-active":"link-icon-normal"}`}>
-      {icon}
+  return(
+    <div className="link-row">
+      <span className={`link-icon ${active ? "link-icon-active" : "link-icon-normal"}`}>
+        {icon}
       </span>
-
       <span className="link-label">
-      $ {label}
+        $ {label}
       </span>
-
       <a
-      href={href}
-      target={href.startsWith("mailto")?"_self":"_blank"}
-      rel="noopener noreferrer"
-      className={`link-anchor ${active?"link-active":"link-normal"}`}
+        href={href}
+        target={href.startsWith("mailto") ? "_self" : "_blank"}
+        rel="noopener noreferrer"
+        className={`link-anchor ${active ? "link-active" : "link-normal"}`}
       >
-      {val}
+        {val}
       </a>
-
-      </div>
-
-      );
+    </div>
+  );
 }
 
 function BulletRow({ text, active = false }: { text: string; active?: boolean }) {
-    return(
-
+  return(
     <div className="bullet-row">
-
-      <span className={`bullet-icon ${active?"bullet-active":"bullet-normal"}`}>
-          {active?"✓":"▸"}
+      <span className={`bullet-icon ${active ? "bullet-active" : "bullet-normal"}`}>
+        {active ? "✓" : "▸"}
       </span>
-
-      <span className={`bullet-text ${active?"bullet-text-active":"bullet-text-normal"}`}>
+      <span className={`bullet-text ${active ? "bullet-text-active" : "bullet-text-normal"}`}>
         {text}
       </span>
-
     </div>
   );
 }
