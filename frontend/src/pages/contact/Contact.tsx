@@ -3,6 +3,7 @@ import BvimLayout from "../../components/layout/BvimLayout.tsx";
 import SectionBox from "../../components/common/SectionBox.tsx";
 import { type FormState, type FormData } from './constants'
 import {sendViaEmailJS} from './helpers.ts'
+import useContactData from './useContactForm'
 import "./contact.css"
 
 
@@ -17,6 +18,8 @@ export default function Contact() {
   const [errMsg, setErrMsg] = useState("");
   const [focused, setFocused] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const { contactInfo, availability, openTo, loading, submitForm } = useContactData();
 
   const handleChange = (field: keyof FormData) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -39,12 +42,17 @@ export default function Contact() {
     setErrMsg("");
 
     try {
+      // Send to backend first (stores in MongoDB)
+      await submitForm(form);
+      
+      // Then send via EmailJS for email notification
       await sendViaEmailJS(form);
+      
       setStatus("success");
       setForm({ from_name: "", from_email: "", subject: "", message: "" });
     } catch (err: any) {
       setStatus("error");
-      setErrMsg(`E: Send failed — ${err.message || "unknown error"}. Check your EmailJS config.`);
+      setErrMsg(`E: Send failed — ${err.message || "unknown error"}. Check your config.`);
     }
   };
 
@@ -285,34 +293,56 @@ export default function Contact() {
 
             {/* Contact Links */}
             <SectionBox title="Contact Info" style={{ margin: 0 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <LinkRow icon="@" label="email"    href="mailto:bhuvan@example.com"                   val="bhuvan@example.com"        active />
-                <LinkRow icon="◈" label="github"   href="https://github.com/BhuvaneshwarMarri"        val="BhuvaneshwarMarri"         />
-                <LinkRow icon="⬡" label="linkedin" href="https://linkedin.com/in/bhuvan"             val="linkedin.com/in/bhuvan"    />
-                <LinkRow icon="✦" label="twitter"  href="https://twitter.com/bhuvan"                 val="@bhuvan"                   />
-              </div>
+              {loading ? (
+                <p style={{ fontSize: "0.8em", color: "var(--text-dim)" }}>Loading...</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {contactInfo && (
+                    <>
+                      <LinkRow icon="@" label="email"    href={`mailto:${contactInfo.email}`}              val={contactInfo.email}    active />
+                      <LinkRow icon="◈" label="github"   href={contactInfo.github.url}                     val={contactInfo.github.handle} />
+                      <LinkRow icon="⬡" label="linkedin" href={contactInfo.linkedin.url}                   val={contactInfo.linkedin.handle} />
+                      <LinkRow icon="✦" label="twitter"  href={contactInfo.twitter.url}                    val={contactInfo.twitter.handle} />
+                    </>
+                  )}
+                </div>
+              )}
             </SectionBox>
 
             {/* Availability */}
             <SectionBox title="Availability" style={{ margin: 0 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <InfoRow label="status"    value="● Open to work"       valueColor="var(--accent2)" active />
-                <InfoRow label="type"      value="Full-time / Freelance" />
-                <InfoRow label="timezone"  value="IST (UTC +5:30)"      />
-                <InfoRow label="response"  value="24–48 hours"          />
-                <InfoRow label="preferred" value="Email or LinkedIn"     />
-              </div>
+              {loading ? (
+                <p style={{ fontSize: "0.8em", color: "var(--text-dim)" }}>Loading...</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {availability && (
+                    <>
+                      <InfoRow label="status"    value={availability.status}           valueColor="var(--accent2)" active />
+                      <InfoRow label="type"      value={availability.type} />
+                      <InfoRow label="timezone"  value={availability.timezone} />
+                      <InfoRow label="response"  value={availability.response_time} />
+                      <InfoRow label="preferred" value={availability.preferred_contact} />
+                    </>
+                  )}
+                </div>
+              )}
             </SectionBox>
 
             {/* Open To */}
             <SectionBox title="Open To" style={{ margin: 0 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <BulletRow text="Full-time engineering roles" active />
-                <BulletRow text="Freelance & contract work" />
-                <BulletRow text="Open-source collaborations" />
-                <BulletRow text="Pair programming & mentoring" />
-                <BulletRow text="Tech talks & community events" />
-              </div>
+              {loading ? (
+                <p style={{ fontSize: "0.8em", color: "var(--text-dim)" }}>Loading...</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {openTo && openTo.length > 0 ? (
+                    openTo.map((item, idx) => (
+                      <BulletRow key={idx} text={item.text} active={item.active} />
+                    ))
+                  ) : (
+                    <p style={{ fontSize: "0.8em", color: "var(--text-dim)" }}>No data</p>
+                  )}
+                </div>
+              )}
             </SectionBox>
 
           </div>

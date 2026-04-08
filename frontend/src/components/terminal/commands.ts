@@ -265,27 +265,36 @@ async function fetchExperienceLines(): Promise<HistoryLine[]> {
 // Endpoint: /home/links (reuse — has email, github, linkedin etc.)
 
 async function fetchContactLines(): Promise<HistoryLine[]> {
-  const res   = await fetch(`${API}/home/links`);
-  const links: Array<{ icon: string; label: string; val: string; href: string }> = await res.json();
+  const [infoRes, availRes, openRes] = await Promise.all([
+    fetch(`${API}/contact/info`),
+    fetch(`${API}/contact/availability`),
+    fetch(`${API}/contact/open-to`),
+  ]);
+
+  const info: { email: string; github: { url: string; handle: string }; linkedin: { url: string; handle: string }; twitter: { url: string; handle: string } } = await infoRes.json();
+  const avail: { status: string; type: string; timezone: string; response_time: string; preferred_contact: string } = await availRes.json();
+  const open: Array<{ text: string; active: boolean }> = await openRes.json();
 
   return [
     LB("  ─── Contact Info ───────────────────────────────"),
-    ...links.map(l => LA(`  ${l.icon}  ${l.label.padEnd(10)} ${l.val}`)),
+    LA(`  @  email    ${info.email}`),
+    LA(`  ◈  github   ${info.github.handle}`),
+    LA(`  ⬡  linkedin ${info.linkedin.handle}`),
+    LA(`  ✦  twitter  ${info.twitter.handle}`),
     BLANK,
 
     LB("  ─── Availability ────────────────────────────────"),
-    LD("  $ status"),    LB("    ● Open to work"),
-    LD("  $ type"),      L ("    Full-time / Freelance"),
-    LD("  $ timezone"),  L ("    IST (UTC +5:30)"),
-    LD("  $ response"),  L ("    Within 24–48 hours"),
-    LD("  $ preferred"), L ("    Email or LinkedIn"),
+    LD("  $ status"),    LB(`    ${avail.status}`),
+    LD("  $ type"),      L (`    ${avail.type}`),
+    LD("  $ timezone"),  L (`    ${avail.timezone}`),
+    LD("  $ response"),  L (`    ${avail.response_time}`),
+    LD("  $ preferred"), L (`    ${avail.preferred_contact}`),
     BLANK,
 
     LA("  ─── Open To ─────────────────────────────────────"),
-    LB("  ✓ Full-time engineering roles"),
-    L ("  ▸ Freelance & contract work"),
-    L ("  ▸ Open-source collaborations"),
-    L ("  ▸ Pair programming & mentoring"),
+    ...open.map(item => 
+      item.active ? LB(`  ✓ ${item.text}`) : L(`  ▸ ${item.text}`)
+    ),
     BLANK,
 
     LD("  tip: type 'bvim' to see the full contact page."),
@@ -323,6 +332,10 @@ export const COMMANDS: Record<string, CommandFn> = {
       L ("│  :font          cycle monospace font            │"),
       L ("│  :font+         increase font size              │"),
       L ("│  :font-         decrease font size              │"),
+      LA("├─────────────────────────────────────────────────┤"),
+      LA("│               ADMIN COMMANDS                    │"),
+      LA("├─────────────────────────────────────────────────┤"),
+      L ("│  :bfetch        refresh cache from MongoDB      │"),
       LA("└─────────────────────────────────────────────────┘"),
       BLANK,
     ]);
@@ -430,6 +443,32 @@ export const COLON_COMMANDS: Record<string, CommandFn> = {
       ]);
     }
   },
+
+  ":bfetch": async (cmd, { setHistory }) => {
+    setHistory(h => [...h, LA(cmd), LD("  ⟳ Refreshing cache from MongoDB...")]);
+
+    try {
+      const res = await fetch(`${API}/admin/cache/invalidate`, { method: "POST" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      setHistory(h => [
+        ...h,
+        LB(`  ✓ Cache invalidated successfully`),
+        LA(`  Cleared ${data.cleared.length} cache keys:`),
+        ...data.cleared.map((key: string) => LD(`    • ${key}`)),
+        BLANK,
+      ]);
+    } catch (err: any) {
+      console.error(err);
+      setHistory(h => [
+        ...h,
+        LC(`  ✗ Failed to refresh cache: ${err.message}`),
+        BLANK,
+      ]);
+    }
+  },
+
   ":font": (_, { fontIdx, setFontIdx, setHistory }) => {
     const next = (fontIdx + 1) % FONTS.length;
     setFontIdx(() => next);
