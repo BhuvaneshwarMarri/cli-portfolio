@@ -6,7 +6,7 @@ import useExperienceData from "./useExperienceData";
 
 export default function Experience() {
   // 1. Destructure with default empty arrays to prevent .length or .map errors
-  const { SKILL_MATRIX = [], JOBS = [] } = useExperienceData() || {};
+  const { SKILL_MATRIX = [], JOBS = [], SUMMARY } = useExperienceData() || {};
 
   return (
     <BvimLayout>
@@ -27,14 +27,14 @@ export default function Experience() {
 `}
               </pre>
               <p className="exp-subtitle">
-                Experience Engine v2.0 &nbsp;·&nbsp;
+                {/* Experience Engine v2.0 &nbsp;·&nbsp; */}
                 <span style={{ color: "var(--accent2)" }}>
                   {JOBS.length} roles detected
                 </span>
               </p>
             </div>
             <div className="exp-total-container">
-              <div className="exp-total-years">1.2 YRS</div>
+              <div className="exp-total-years">{SUMMARY?.total_exp || "1.2 YRS"}</div>
               <div className="exp-total-label">TOTAL EXP</div>
             </div>
           </div>
@@ -65,10 +65,10 @@ export default function Experience() {
             {/* Summary stats */}
             <SectionBox title="Summary" style={{ margin: 0 }}>
               <div className="exp-summary-list">
-                <StatRow label="Total Exp"  value="2.4 yrs"  color="var(--accent2)" active />
-                <StatRow label="Companies"  value="2"        color="var(--accent)"  />
-                <StatRow label="Stack"      value="Full"      color="var(--accent3)" />
-                <StatRow label="Domain"     value="Web · AI" color="var(--accent)"  />
+                <StatRow label="Total Exp"  value={SUMMARY?.total_exp || "2.4 yrs"}  color="var(--accent2)" active />
+                <StatRow label="Companies"  value={SUMMARY?.companies || "2"}        color="var(--accent)"  />
+                <StatRow label="Stack"      value={SUMMARY?.stack || "Full"}      color="var(--accent3)" />
+                <StatRow label="Domain"     value={SUMMARY?.domain || "Web · AI"} color="var(--accent)"  />
               </div>
             </SectionBox>
 
@@ -79,7 +79,7 @@ export default function Experience() {
             >
               <div className="exp-skill-scroll">
                 {SKILL_MATRIX.map((s, idx) => (
-                  <SkillBar key={s.label || idx} label={s.label} level={s.level} color={s.color} />
+                  <SkillBar key={s.label || idx} label={s.label} level={+s.level} color={s.color} />
                 ))}
               </div>
             </SectionBox>

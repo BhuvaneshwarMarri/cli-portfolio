@@ -11,6 +11,11 @@ async def get_experience():
     return doc["jobs"]
 
 @router.get("/skills")
-async def get_experience():
+async def get_experience_skills():
     doc = await fetch_one(col, "experience_data")
     return doc["skill_matrix"]
+
+@router.get("/summary")
+async def get_experience_summary():
+    doc = await fetch_one(col, "experience_data")
+    return doc.get("summary", {})

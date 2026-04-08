@@ -11,6 +11,13 @@ COLLECTION_NAME = "experience"
 data = {
     "type": "experience_data",
 
+    "summary": {
+        "total_exp": "2.4 yrs",
+        "companies": "2",
+        "stack": "Full",
+        "domain": "Web · AI"
+    },
+
     "jobs": [
         {
             "title": "Full Stack Developer",
