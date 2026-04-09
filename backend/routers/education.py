@@ -8,9 +8,9 @@ col    = get_collection("education")
 @router.get("")
 async def get_education():
     doc = await fetch_one(col, "education_data")
-    return doc["timeline"]
+    return doc.get("timeline", [])
 
 @router.get("/courses")
 async def get_courses():
     doc = await fetch_one(col, "education_data")
-    return doc["courses"]
+    return doc.get("courses", [])

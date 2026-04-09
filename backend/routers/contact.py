@@ -90,6 +90,7 @@ async def submit_contact(form: ContactForm):
     # Fire-and-forget email notifications — failures must not fail the API response
     email_sent = False
     try:
+        
         email_sent = await EmailService.send_contact_notification(
             from_name=form.from_name,
             from_email=form.from_email,

@@ -8,14 +8,14 @@ col    = get_collection("home")
 @router.get("/interests")
 async def get_interests():
     doc = await fetch_one(col, "home_data")
-    return doc["interests"]
+    return doc.get("interests", [])
 
 @router.get("/links")
 async def get_links():
     doc = await fetch_one(col, "home_data")
-    return doc["links"]
+    return doc.get("links", [])
 
 @router.get("/commands")
 async def get_commands():
     doc = await fetch_one(col, "home_data")
-    return doc["commands"]
+    return doc.get("commands", [])

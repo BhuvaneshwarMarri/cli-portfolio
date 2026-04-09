@@ -10,19 +10,19 @@ col = get_collection("skills")
 @router.get("")
 async def get_skills():
     doc = await fetch_one(col, "skills_data")
-    return doc["skill_groups"]
+    return doc.get("skill_groups", [])
 
 
 @router.get("/tech-stack")
 async def get_tech_stack():
     doc = await fetch_one(col, "skills_data")
-    return doc["tech_stack"]
+    return doc.get("tech_stack", [])
 
 
 @router.get("/proficiency")
 async def get_proficiency_levels():
     doc = await fetch_one(col, "skills_data")
-    return doc["proficiency_levels"]
+    return doc.get("proficiency_levels", [])
 
 
 @router.get("/breakdown")

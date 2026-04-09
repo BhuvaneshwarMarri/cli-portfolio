@@ -1,19 +1,39 @@
 """
 Email service for sending contact form notifications and replies.
-Supports SMTP-based email sending with async/await pattern.
+Uses Mailtrap API client for email delivery.
 """
 
-import aiosmtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from backend.config import settings
+import asyncio
 import logging
+import mailtrap as mt
+
+from backend.config import settings
 
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Mailtrap credentials — sourced from Settings (which reads from .env).
+# Evaluated lazily inside each method so test overrides to `settings` work.
+# ---------------------------------------------------------------------------
+
+
+def _token()      -> str: return settings.mailtrap_api_token
+def _from_email() -> str: return settings.email_from_address
+def _from_name()  -> str: return settings.email_from_name
+def _to_email()   -> str: return settings.email_recipient
 
 
 class EmailService:
     """Handle email sending for contact form submissions."""
+
+    @staticmethod
+    def _get_client() -> mt.MailtrapClient:
+        """Return a configured Mailtrap client."""
+        return mt.MailtrapClient(token=_token())
+
+    # ------------------------------------------------------------------
+    # send_contact_notification
+    # ------------------------------------------------------------------
 
     @staticmethod
     async def send_contact_notification(
@@ -38,25 +58,16 @@ class EmailService:
             logger.info("Email notifications disabled — skipping send")
             return True
 
-        if not all(
-            [
-                settings.email_smtp_host,
-                settings.email_smtp_user,
-                settings.email_smtp_password,
-                settings.email_recipient,
-            ]
-        ):
-            logger.warning("Email settings incomplete — cannot send notification email")
+        if not all([_token(), _from_email(), _to_email()]):
+            logger.warning(
+                "Mailtrap settings incomplete "
+                "(MAILTRAP_API_TOKEN / EMAIL_FROM_ADDRESS / EMAIL_RECIPIENT) "
+                "— cannot send notification email"
+            )
             return False
 
         try:
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = f"New Contact Form: {subject}"
-            msg["From"] = f"{settings.email_from_name} <{settings.email_from_address}>"
-            msg["To"] = settings.email_recipient
-            msg["Reply-To"] = from_email
-
-            text = (
+            text_body = (
                 f"New Contact Form Submission:\n\n"
                 f"From: {from_name} <{from_email}>\n"
                 f"Subject: {subject}\n\n"
@@ -65,7 +76,7 @@ class EmailService:
                 f"This is an automated message from your portfolio contact form.\n"
             )
 
-            html = f"""
+            html_body = f"""
 <html>
   <body style="font-family: monospace; color: #333;">
     <h2 style="color: #0066cc;">New Contact Form Submission</h2>
@@ -82,16 +93,19 @@ class EmailService:
 </html>
 """
 
-            msg.attach(MIMEText(text, "plain"))
-            msg.attach(MIMEText(html, "html"))
+            mail = mt.Mail(
+                sender=mt.Address(email=_from_email(), name=_from_name()),
+                to=[mt.Address(email=_to_email())],
+                reply_to=mt.Address(email=from_email, name=from_name),
+                subject=f"New Contact Form: {subject}",
+                text=text_body,
+                html=html_body,
+            )
 
-            async with aiosmtplib.SMTP(
-                hostname=settings.email_smtp_host,
-                port=settings.email_smtp_port,
-                use_tls=True,
-            ) as smtp:
-                await smtp.login(settings.email_smtp_user, settings.email_smtp_password)
-                await smtp.send_message(msg)
+            # mt.MailtrapClient.send() is synchronous — run it in a thread
+            # pool so it does not block FastAPI's async event loop.
+            client = EmailService._get_client()
+            await asyncio.to_thread(client.send, mail)
 
             logger.info(f"Contact notification email sent successfully from {from_email}")
             return True
@@ -100,10 +114,14 @@ class EmailService:
             logger.error(f"Failed to send contact notification email: {e}")
             return False
 
+    # ------------------------------------------------------------------
+    # send_autoreply
+    # BUG FIX #7: was `send_autorely` (typo) — corrected to `send_autoreply`.
+    # contact.py was calling the corrected name, which would raise
+    # AttributeError at runtime whenever email was enabled.
+    # ------------------------------------------------------------------
+
     @staticmethod
-    # BUG FIX #7: Method was named `send_autorely` (typo). Renamed to
-    # `send_autoreply` — contact.py was calling the misspelled name, which
-    # would raise AttributeError at runtime whenever email was enabled.
     async def send_autoreply(
         recipient_email: str,
         recipient_name: str,
@@ -122,33 +140,25 @@ class EmailService:
             logger.info("Email notifications disabled — skipping auto-reply")
             return True
 
-        if not all(
-            [
-                settings.email_smtp_host,
-                settings.email_smtp_user,
-                settings.email_smtp_password,
-                settings.email_from_address,
-            ]
-        ):
-            logger.warning("Email settings incomplete — cannot send auto-reply")
+        if not all([_token(), _from_email()]):
+            logger.warning(
+                "Mailtrap settings incomplete "
+                "(MAILTRAP_API_TOKEN / EMAIL_FROM_ADDRESS) "
+                "— cannot send auto-reply"
+            )
             return False
 
         try:
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = "Thank you for your message"
-            msg["From"] = f"{settings.email_from_name} <{settings.email_from_address}>"
-            msg["To"] = recipient_email
-
-            text = (
+            text_body = (
                 f"Hi {recipient_name},\n\n"
                 f"Thank you for reaching out! I've received your message and will "
                 f"get back to you as soon as possible.\n"
                 f"Typical response time is 24–48 hours.\n\n"
                 f"Best regards,\n"
-                f"{settings.email_from_name}\n"
+                f"{_from_name()}\n"
             )
 
-            html = f"""
+            html_body = f"""
 <html>
   <body style="font-family: monospace; color: #333; line-height: 1.6;">
     <p>Hi {recipient_name},</p>
@@ -157,21 +167,23 @@ class EmailService:
       to you as soon as possible.
     </p>
     <p>Typical response time is <strong>24–48 hours</strong>.</p>
-    <p>Best regards,<br><strong>{settings.email_from_name}</strong></p>
+    <p>Best regards,<br><strong>{_from_name()}</strong></p>
   </body>
 </html>
 """
 
-            msg.attach(MIMEText(text, "plain"))
-            msg.attach(MIMEText(html, "html"))
+            mail = mt.Mail(
+                sender=mt.Address(email=_from_email(), name=_from_name()),
+                to=[mt.Address(email=recipient_email, name=recipient_name)],
+                subject="Thank you for your message",
+                text=text_body,
+                html=html_body,
+            )
 
-            async with aiosmtplib.SMTP(
-                hostname=settings.email_smtp_host,
-                port=settings.email_smtp_port,
-                use_tls=True,
-            ) as smtp:
-                await smtp.login(settings.email_smtp_user, settings.email_smtp_password)
-                await smtp.send_message(msg)
+            # mt.MailtrapClient.send() is synchronous — run it in a thread
+            # pool so it does not block FastAPI's async event loop.
+            client = EmailService._get_client()
+            await asyncio.to_thread(client.send, mail)
 
             logger.info(f"Auto-reply sent successfully to {recipient_email}")
             return True

@@ -9,10 +9,11 @@ dependencies = [
     "motor>=3.7.1",
     "pydantic-settings>=2.13.1",
     "python-dotenv>=1.2.2",
-    "redis[asyncio]>=7.4.0",
+    "redis>=7.4.0",
     "tinydb>=4.8.2",
     "aiosmtplib>=3.0.2",
     "email-validator>=2.1.1",
+    "mailtrap>=2.5.0",
 ]
 
 [dependency-groups]

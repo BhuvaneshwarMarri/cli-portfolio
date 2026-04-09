@@ -277,16 +277,17 @@ This is useful after updating data in MongoDB to bypass Redis cache.
 
 from fastapi import APIRouter
 from backend.cache.cache import invalidate
+from backend.config import settings
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 # Cache keys managed by this endpoint
 CACHE_KEYS = [
-    "github:repos:BhuvaneshwarMarri",
+    f"github:repos:{settings.github_username}",
     "mongo:education:education_data",
     "mongo:skills:skills_data",
     "mongo:experience:experience_data",
-    "mongo:about:home_data",
+    "mongo:home:home_data",
     "mongo:contact:contact_data",
 ]
 

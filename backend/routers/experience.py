@@ -8,12 +8,12 @@ col    = get_collection("experience")
 @router.get("")
 async def get_experience():
     doc = await fetch_one(col, "experience_data")
-    return doc["jobs"]
+    return doc.get("jobs", [])
 
 @router.get("/skills")
 async def get_experience_skills():
     doc = await fetch_one(col, "experience_data")
-    return doc["skill_matrix"]
+    return doc.get("skill_matrix", {})
 
 @router.get("/summary")
 async def get_experience_summary():
