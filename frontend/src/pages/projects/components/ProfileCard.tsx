@@ -46,20 +46,22 @@ const LANGUAGE_COLORS: Record<string, string> = {
 };
 
 export function ProfileCard() {
-  const contributions = [2, 5, 3, 7, 4, 6, 1, 8, 5, 3, 6, 2, 7, 4, 8, 5, 3, 6, 2, 7, 4, 5, 8, 3];
-
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [contributions, setContributions] = useState<number[]>([]);
   const [languages, setLanguages] = useState<LanguageBreakdown[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
     
-    // Fetch full GitHub profile with all repos stats and avatar
+    // Fetch full GitHub profile with all repos stats, avatar, and contributions
     fetch("http://localhost:8000/projects/profile")
       .then(res => res.json())
       .then(data => {
-        if (isMounted) setProfile(data);
+        if (isMounted) {
+          setProfile(data);
+          setContributions(data.contributions || []);
+        }
       })
       .catch(err => console.error("[ProfileCard] profile fetch failed:", err));
     

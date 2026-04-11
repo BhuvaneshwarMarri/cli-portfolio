@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from backend.db import get_collection
 from backend.services.mongo_service import fetch_one
-from backend.services.github_service import get_repos, get_user_profile
+from backend.services.github_service import get_repos, get_user_profile, get_contribution_data
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 col = get_collection("projects")
@@ -63,13 +63,16 @@ async def project_stats():
 
 @router.get("/profile")
 async def profile_stats():
-    """Get full GitHub profile stats (all repositories) with avatar"""
+    """Get full GitHub profile stats (all repositories) with avatar and contributions"""
     try:
         # Get all repos from GitHub
         all_repos = await get_repos()
         
         # Get user profile
         profile = await get_user_profile()
+        
+        # Get contribution data
+        contributions = await get_contribution_data()
         
         # Calculate stats from ALL repos
         total_stars = sum(r["stars"] for r in all_repos)
@@ -89,6 +92,7 @@ async def profile_stats():
             "followers":     profile["followers"],
             "following":     profile["following"],
             "html_url":      profile["html_url"],
+            "contributions": contributions,
         }
     except HTTPException:
         raise
