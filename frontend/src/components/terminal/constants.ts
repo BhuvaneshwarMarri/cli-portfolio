@@ -72,6 +72,13 @@ export const THEMES: Record<ThemeName, Record<string, string>> = {
   "--accent": "#4caf50", "--accent2": "#a7c957", "--accent3": "#ff6b6b",
   "--selection": "#1f2e25", "--cursor": "#4caf50",
   },
+  commandprompt: {
+    "--bg": "#000000", "--bg-sidebar": "#000000", "--bg-content": "#000000",
+    "--border": "#00ffff", "--border-dim": "#003366",
+    "--text": "#00ffff", "--text-dim": "#666666",
+    "--accent": "#ffffff", "--accent2": "#00ff00", "--accent3": "#ff5555",
+    "--selection": "#004488", "--cursor": "#ffffff",
+  },
 };
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────

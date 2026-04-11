@@ -179,7 +179,7 @@ export default function Contact() {
         >
           {/* ── MESSAGE FORM ─────────────────────────────────────────────── */}
           <SectionBox
-            title="✉ send_message.sh"
+            title="send_message.sh"
             style={{ display: "flex", flexDirection: "column", minHeight: 0, margin: 0 }}
           >
             {/* BUG FIX #1: was `oValidate` (typo) — corrected to `noValidate`

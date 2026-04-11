@@ -1,4 +1,4 @@
-export type ThemeName  = "catppuccin" | "dracula" | "nord" | "gruvbox" | "tokyo" | "nothing" | "cyberpunk" | "forest";
+export type ThemeName  = "commandprompt"| "catppuccin" | "dracula" | "nord" | "gruvbox" | "tokyo" | "nothing" | "cyberpunk" | "forest";
 
 export type HistoryLine = {
   text   : string;

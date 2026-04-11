@@ -50,7 +50,7 @@ export default function Skills() {
           {SKILL_GROUPS.map((group) => (
             <SectionBox
               key={group.title}
-              title={`${group.icon} ${group.title}`}
+              title={`${group.title}`}
               style={{ margin: 0, display: "flex", flexDirection: "column" }}
             >
               <div className="sk-skill-list">
@@ -73,7 +73,7 @@ export default function Skills() {
         <div className="sk-bottom-grid">
 
           {/* Tech stack tags */}
-          <SectionBox title="∷ Tech Stack" style={{ margin: 0 }}>
+          <SectionBox title="Tech Stack" style={{ margin: 0 }}>
             <div className="sk-tech-stack">
               {TECH_STACK.map((tech, i) => {
                 const sizes = [0.95, 0.85, 0.78];
@@ -104,7 +104,7 @@ export default function Skills() {
           </SectionBox>
 
           {/* Proficiency matrix */}
-          <SectionBox title="⊞ Proficiency Matrix" style={{ margin: 0 }}>
+          <SectionBox title="Proficiency Matrix" style={{ margin: 0 }}>
             <div className="sk-matrix">
               {PROFICIENCY_LEVELS.map(p => (
                 <div key={p.label}>

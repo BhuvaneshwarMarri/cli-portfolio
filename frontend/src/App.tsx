@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import TerminalView from "./components/terminal/TerminalView.tsx";
 import BvimView     from "./components/bvim/BvimView";
@@ -14,8 +14,19 @@ export default function App() {
   const [history, setHistory] = useState<HistoryLine[]>([]);
   const [input,   setInput]   = useState("");
 
-  // ── Shared theme & font — survive terminal ↔ bvim switches ─────────────────
-  const [theme,    setTheme]    = useState<ThemeName>("catppuccin");
+  // ── Theme initialization with localStorage persistence ──────────────────────
+  const DEFAULT_THEME: ThemeName = "catppuccin";
+  const [theme, setTheme] = useState<ThemeName>(() => {
+    const saved = localStorage.getItem("portfolio_theme");
+    return (saved as ThemeName) || DEFAULT_THEME;
+  });
+
+  // ── Persist theme changes to localStorage ────────────────────────────────────
+  useEffect(() => {
+    localStorage.setItem("portfolio_theme", theme);
+  }, [theme]);
+
+  // ── Font settings ───────────────────────────────────────────────────────────
   const [fontIdx,  setFontIdx]  = useState(0);
   const [fontSize, setFontSize] = useState<number>(15);
 

@@ -61,7 +61,7 @@ export default function Home() {
         {/* ── GRID ────────────────────────────────────────────────────────── */}
         <div className="hm-grid">
           {/* ── TOP LEFT: whoami (compact) ── */}
-          <SectionBox title="$ whoami" style={{ margin: 0 }}>
+          <SectionBox title="whoami" style={{ margin: 0 }}>
             <div className="hm-stack">
               <Field label="name" value="Bhuvaneshwar Marri" highlight />
               <Field label="role" value="Full Stack Dev" />
@@ -77,7 +77,7 @@ export default function Home() {
           </SectionBox>
 
           {/* ── TOP RIGHT: bio (wider) ── */}
-          <SectionBox title="$ cat bio.md" style={{ margin: 0 }}>
+          <SectionBox title="bio.md" style={{ margin: 0 }}>
             <p className="hm-bio">
               Hi, I'm{" "}
               <span style={{ color: "var(--accent)", fontWeight: 700 }}>
@@ -108,7 +108,7 @@ export default function Home() {
           </SectionBox>
 
           {/* ── BOTTOM LEFT: interests + links ── */}
-          <SectionBox title="$ interests  &  links" style={{ margin: 0 }}>
+          <SectionBox title="interests  &  links" style={{ margin: 0 }}>
             <div className="hm-split">
               {/* Interests */}
               <div className="hm-interest-list">
@@ -180,7 +180,7 @@ export default function Home() {
           </SectionBox>
 
           {/* ── BOTTOM RIGHT: commands ── */}
-          <SectionBox title="$ :help" style={{ margin: 0 }}>
+          <SectionBox title="help" style={{ margin: 0 }}>
             <div className="hm-command-box">
               {/* Theme commands */}
               <div className="hm-command-list">

@@ -11,6 +11,13 @@ type FocusArea = "sidebar" | "content";
 // ─── Theme definitions ────────────────────────────────────────────────────────
 
 const THEMES: Record<ThemeName, Record<string, string>> = {
+   commandprompt: {
+    "--bg": "#000000", "--bg-sidebar": "#000000", "--bg-content": "#000000",
+    "--border": "#00ffff", "--border-dim": "#003366",
+    "--text": "#00ffff", "--text-dim": "#666666",
+    "--accent": "#ffffff", "--accent2": "#00ff00", "--accent3": "#ff5555",
+    "--selection": "#004488", "--cursor": "#ffffff",
+  },
   catppuccin: {
     "--bg": "#1e1e2e", "--bg-sidebar": "#181825", "--bg-content": "#1e1e2e",
     "--border": "#89b4fa", "--border-dim": "#313244",
