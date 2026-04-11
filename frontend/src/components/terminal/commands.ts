@@ -332,10 +332,6 @@ export const COMMANDS: Record<string, CommandFn> = {
       L ("│  :font          cycle monospace font            │"),
       L ("│  :font+         increase font size              │"),
       L ("│  :font-         decrease font size              │"),
-      LA("├─────────────────────────────────────────────────┤"),
-      LA("│               ADMIN COMMANDS                    │"),
-      LA("├─────────────────────────────────────────────────┤"),
-      L ("│  :bfetch        refresh cache from MongoDB      │"),
       LA("└─────────────────────────────────────────────────┘"),
       BLANK,
     ]);
