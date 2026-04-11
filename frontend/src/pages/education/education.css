@@ -42,7 +42,7 @@
 /* Body grid */
 .edu-grid{
   display:grid;
-  grid-template-columns:1fr 260px;
+  grid-template-columns:1fr 370px;
   gap:0 16px;
   flex:1;
   min-height:0;

@@ -34,7 +34,7 @@ export default function Experience() {
               </p>
             </div>
             <div className="exp-total-container">
-              <div className="exp-total-years">{SUMMARY?.total_exp || "1.2 YRS"}</div>
+              <div className="exp-total-years">{SUMMARY?.total_exp || "> 1 year"}</div>
               <div className="exp-total-label">TOTAL EXP</div>
             </div>
           </div>
@@ -65,10 +65,10 @@ export default function Experience() {
             {/* Summary stats */}
             <SectionBox title="Summary" style={{ margin: 0 }}>
               <div className="exp-summary-list">
-                <StatRow label="Total Exp"  value={SUMMARY?.total_exp || "2.4 yrs"}  color="var(--accent2)" active />
-                <StatRow label="Companies"  value={SUMMARY?.companies || "2"}        color="var(--accent)"  />
+                <StatRow label="Total Exp"  value={SUMMARY?.total_exp || "> 1 year"}  color="var(--accent2)" active />
+                <StatRow label="Companies"  value={SUMMARY?.companies || "1"}        color="var(--accent)"  />
                 <StatRow label="Stack"      value={SUMMARY?.stack || "Full"}      color="var(--accent3)" />
-                <StatRow label="Domain"     value={SUMMARY?.domain || "Web · AI"} color="var(--accent)"  />
+                <StatRow label="Domain"     value={SUMMARY?.domain || "Web · AI "} color="var(--accent)"  />
               </div>
             </SectionBox>
 

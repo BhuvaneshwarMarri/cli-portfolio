@@ -6,6 +6,10 @@ import com.smaarig.portfolio_editor.models.home.Link
 import com.smaarig.portfolio_editor.models.education.Timeline
 import com.smaarig.portfolio_editor.models.experience.Job
 import com.smaarig.portfolio_editor.models.experience.SkillMatrix
+import com.smaarig.portfolio_editor.models.contact.SocialLink
+import com.smaarig.portfolio_editor.models.contact.Availability
+import com.smaarig.portfolio_editor.models.contact.ContactInfo
+import com.smaarig.portfolio_editor.models.contact.OpenToInfo
 import retrofit2.http.*
 
 interface HomeApiService {
@@ -88,4 +92,62 @@ interface HomeApiService {
 
     @DELETE("projects/{name}")
     suspend fun deleteProject(@Path("name") name: String)
+
+    // Contact - Links
+    @GET("contact/github")
+    suspend fun getGithub(): SocialLink
+
+    @POST("contact/github")
+    suspend fun addGithub(@Body link: SocialLink): SocialLink
+
+    @DELETE("contact/github")
+    suspend fun deleteGithub()
+
+    @GET("contact/linkedin")
+    suspend fun getLinkedin(): SocialLink
+
+    @POST("contact/linkedin")
+    suspend fun addLinkedin(@Body link: SocialLink): SocialLink
+
+    @DELETE("contact/linkedin")
+    suspend fun deleteLinkedin()
+
+    @GET("contact/twitter")
+    suspend fun getTwitter(): SocialLink
+
+    @POST("contact/twitter")
+    suspend fun addTwitter(@Body link: SocialLink): SocialLink
+
+    @DELETE("contact/twitter")
+    suspend fun deleteTwitter()
+
+    // Contact - Availability
+    @GET("contact/availability")
+    suspend fun getAvailability(): Availability
+
+    @POST("contact/availability")
+    suspend fun addAvailability(@Body availability: Availability): Availability
+
+    @DELETE("contact/availability")
+    suspend fun deleteAvailability()
+
+    // Contact - Info
+    @GET("contact/info")
+    suspend fun getContactInfo(): ContactInfo
+
+    @POST("contact/info")
+    suspend fun addContactInfo(@Body info: ContactInfo): ContactInfo
+
+    @DELETE("contact/info")
+    suspend fun deleteContactInfo()
+
+    // Contact - Open To
+    @GET("contact/open-to")
+    suspend fun getOpenTo(): List<OpenToInfo>
+
+    @POST("contact/open-to")
+    suspend fun addOpenTo(@Body info: OpenToInfo): OpenToInfo
+
+    @DELETE("contact/open-to/{text}")
+    suspend fun deleteOpenTo(@Path("text") text: String)
 }

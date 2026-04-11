@@ -169,7 +169,7 @@ export default function Contact() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 260px",
+            gridTemplateColumns: "1fr 370px",
             gap: "16px",
             flex: 1,
             minHeight: 0,

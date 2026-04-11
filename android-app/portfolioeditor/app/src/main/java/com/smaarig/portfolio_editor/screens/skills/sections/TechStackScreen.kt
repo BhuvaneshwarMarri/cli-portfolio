@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -69,7 +69,7 @@ fun TechStackList(items: List<String>, onDelete: (String) -> Unit) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(items, key = { it }) { item ->
+        itemsIndexed(items, key = { index, item -> "$item-$index" }) { _, item ->
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()

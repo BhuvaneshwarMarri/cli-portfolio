@@ -40,7 +40,7 @@ class ProficiencyLevelViewModel : ViewModel() {
                 RetrofitClient.skillsApi.addProficiencyLevel(proficiencyLevel)
                 fetchProficiencyLevels() // Refresh list
             } catch (e: Exception) {
-                // In a real app, handle error (e.g., via a separate channel/flow)
+                _uiState.value = ProficiencyLevelUiState.Error(e.message ?: "Failed to add proficiency level")
             }
         }
     }
@@ -60,7 +60,7 @@ class ProficiencyLevelViewModel : ViewModel() {
                     )
                 }
             } catch (e: Exception) {
-                // In a real app, handle error
+                _uiState.value = ProficiencyLevelUiState.Error(e.message ?: "Failed to delete proficiency level")
             }
         }
     }

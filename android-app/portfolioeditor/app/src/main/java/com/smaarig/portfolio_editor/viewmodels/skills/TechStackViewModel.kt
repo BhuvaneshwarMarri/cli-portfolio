@@ -42,7 +42,7 @@ class TechStackViewModel : ViewModel() {
                 RetrofitClient.skillsApi.addTechStack(body)
                 fetchTechStack()
             } catch (e: Exception) {
-                // handle error
+                _uiState.value = TechStackUiState.Error(e.message ?: "Failed to add tech stack item")
             }
         }
     }
@@ -58,7 +58,7 @@ class TechStackViewModel : ViewModel() {
                     )
                 }
             } catch (e: Exception) {
-                // handle error
+                _uiState.value = TechStackUiState.Error(e.message ?: "Failed to delete tech stack item")
             }
         }
     }

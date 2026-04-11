@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -74,7 +74,7 @@ fun SkillGroupList(groups: List<SkillGroup>, onDelete: (SkillGroup) -> Unit) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(groups, key = { it.title }) { group ->
+        itemsIndexed(groups, key = { index, group -> "${group.title}-$index" }) { _, group ->
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -93,7 +93,7 @@ fun SkillGroupList(groups: List<SkillGroup>, onDelete: (SkillGroup) -> Unit) {
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    group.skills.forEach { skill ->
+                    group.skills?.forEach { skill ->
                         ListItem(
                             headlineContent = { Text(skill.name, fontWeight = FontWeight.Medium) },
                             trailingContent = {

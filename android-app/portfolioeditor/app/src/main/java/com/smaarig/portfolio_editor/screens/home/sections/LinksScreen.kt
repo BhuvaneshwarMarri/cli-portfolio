@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -72,7 +72,7 @@ fun LinkList(links: List<Link>, onDelete: (Link) -> Unit) {
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(links, key = { it.label }) { link ->
+        itemsIndexed(links, key = { index, link -> "${link.label}-$index" }) { _, link ->
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()

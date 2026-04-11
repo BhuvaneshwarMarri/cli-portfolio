@@ -40,7 +40,7 @@ class SkillGroupViewModel : ViewModel() {
                 RetrofitClient.skillsApi.addSkillGroup(skillGroup)
                 fetchSkillGroups()
             } catch (e: Exception) {
-                // handle error
+                _uiState.value = SkillGroupUiState.Error(e.message ?: "Failed to add skill group")
             }
         }
     }
@@ -56,7 +56,7 @@ class SkillGroupViewModel : ViewModel() {
                     )
                 }
             } catch (e: Exception) {
-                // handle error
+                _uiState.value = SkillGroupUiState.Error(e.message ?: "Failed to delete skill group")
             }
         }
     }

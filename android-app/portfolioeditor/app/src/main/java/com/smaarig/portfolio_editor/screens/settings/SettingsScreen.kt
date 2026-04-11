@@ -52,12 +52,25 @@ fun SettingsScreen(themeViewModel: ThemeViewModel) {
             )
         }
 
-        SettingsSection(title = "SYSTEM") {
+        SettingsSection(title = "APP DETAILS") {
             SettingsItem(
                 icon = Icons.Default.Info,
-                label = "App Version",
+                label = "Version",
                 value = "1.0.0-DOT"
             )
+            SettingsItem(
+                icon = Icons.Default.Person,
+                label = "Developer",
+                value = "Smaarig Portfolio"
+            )
+            SettingsItem(
+                icon = Icons.Default.Email,
+                label = "Support Email",
+                value = "support@smaarig.com"
+            )
+        }
+
+        SettingsSection(title = "SYSTEM") {
             SettingsItem(
                 icon = Icons.Default.Storage,
                 label = "Clear Cache",

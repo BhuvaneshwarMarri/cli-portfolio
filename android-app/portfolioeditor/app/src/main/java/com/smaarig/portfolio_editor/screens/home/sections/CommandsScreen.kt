@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -73,7 +73,7 @@ fun CommandList(commands: List<Command>, onDelete: (Command) -> Unit) {
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(commands, key = { it.cmd }) { command ->
+        itemsIndexed(commands, key = { index, command -> "${command.cmd}-$index" }) { _, command ->
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()

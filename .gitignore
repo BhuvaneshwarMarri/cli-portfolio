@@ -96,3 +96,4 @@ out/
 .portfolio_data/
 .idea/
 constants.ts
+gradle.properties

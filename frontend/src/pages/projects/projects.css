@@ -72,7 +72,7 @@
 /* main body grid */
 .pr-grid{
   display:grid;
-  grid-template-columns:1fr 220px;
+  grid-template-columns:1fr 250px;
   gap:16px;
   flex:1;
   min-height:0;

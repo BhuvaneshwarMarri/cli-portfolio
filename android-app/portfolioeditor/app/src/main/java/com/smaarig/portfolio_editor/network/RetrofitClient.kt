@@ -3,6 +3,7 @@ package com.smaarig.portfolio_editor.network
 import com.smaarig.portfolio_editor.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object RetrofitClient {
     private val BASE_URL: String by lazy {
@@ -13,6 +14,7 @@ object RetrofitClient {
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
