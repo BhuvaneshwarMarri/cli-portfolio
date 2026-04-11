@@ -47,6 +47,10 @@ undo/
 .DS_Store
 Thumbs.db
 
+# --- Gradle ---
+gradle.properties
+*.gradle
+
 # --- Database (Local) ---
 *.sqlite3
 *.db
