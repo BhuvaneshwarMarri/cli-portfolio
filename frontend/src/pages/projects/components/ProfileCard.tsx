@@ -50,12 +50,13 @@ export function ProfileCard() {
   const [contributions, setContributions] = useState<number[]>([]);
   const [languages, setLanguages] = useState<LanguageBreakdown[]>([]);
   const [loading, setLoading] = useState(true);
+  const apiUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
     let isMounted = true;
     
     // Fetch full GitHub profile with all repos stats, avatar, and contributions
-    fetch("http://localhost:8000/projects/profile")
+    fetch("${apiUrl}/projects/profile")
       .then(res => res.json())
       .then(data => {
         if (isMounted) {
@@ -66,7 +67,7 @@ export function ProfileCard() {
       .catch(err => console.error("[ProfileCard] profile fetch failed:", err));
     
     // Fetch language breakdown from all repos
-    fetch("http://localhost:8000/skills/breakdown")
+    fetch("${apiUrl}/skills/breakdown")
       .then(res => res.json())
       .then(data => {
         if (isMounted) {
@@ -80,7 +81,7 @@ export function ProfileCard() {
       });
     
     return () => { isMounted = false; };
-  }, []);
+  }, [apiUrl]);
 
   const statItems = [
     { label: "Repos",  value: profile ? String(profile.repositories) : "…", color: "var(--accent)"  },

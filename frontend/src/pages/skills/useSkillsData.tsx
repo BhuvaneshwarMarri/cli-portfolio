@@ -22,23 +22,24 @@ export default function useSkillsData() {
   const [SKILL_GROUPS,       setSkillGroups]       = useState<SkillGroup[]>([]);
   const [TECH_STACK,         setTechStack]         = useState<string[]>([]);
   const [PROFICIENCY_LEVELS, setProficiencyLevels] = useState<ProficiencyLevel[]>([]);
+  const apiUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
-    fetch("http://localhost:8000/skills")
+    fetch("${apiUrl}/skills")
       .then(res => res.json())
       .then((data: SkillGroup[]) => setSkillGroups(data))
       .catch(err => console.error("Skills error:", err));
 
-    fetch("http://localhost:8000/skills/tech-stack")
+    fetch("${apiUrl}/skills/tech-stack")
       .then(res => res.json())
       .then((data: string[]) => setTechStack(data))
       .catch(err => console.error("Tech stack error:", err));
 
-    fetch("http://localhost:8000/skills/proficiency")
+    fetch("${apiUrl}/skills/proficiency")
       .then(res => res.json())
       .then((data: ProficiencyLevel[]) => setProficiencyLevels(data))
       .catch(err => console.error("Proficiency error:", err));
-  }, []);
+  }, [apiUrl]);
 
   return { SKILL_GROUPS, TECH_STACK, PROFICIENCY_LEVELS };
 }

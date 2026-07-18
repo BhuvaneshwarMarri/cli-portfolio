@@ -31,6 +31,7 @@ export default function Projects() {
   const [stats, setStats]       = useState<StatsType>([]);
   const [profileStats, setProfileStats] = useState<ProfileStats | null>(null);
   const [loading, setLoading]   = useState(true);
+  const apiUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
     let isMounted = true; // Fix 4: Prevent state updates on unmounted component
@@ -50,7 +51,7 @@ export default function Projects() {
       });
 
     // Fetch complete profile stats (all repos)
-    fetch("http://localhost:8000/projects/profile")
+    fetch("${apiUrl}/projects/profile")
       .then(res => res.json())
       .then(data => {
         if (isMounted) {
@@ -60,7 +61,7 @@ export default function Projects() {
       .catch(err => console.error("Failed to fetch profile stats:", err));
 
     return () => { isMounted = false; };
-  }, []);
+  }, [apiUrl]);
 
   return (
     <BvimLayout>
