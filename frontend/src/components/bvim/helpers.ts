@@ -1,7 +1,7 @@
 // helpers.ts
 
-import { THEMES, ThemeName } from "./themes";
-import { SECTIONS, Section } from "./constants";
+import { THEMES, type ThemeName } from "./themes";
+import { SECTIONS, type Section } from "./constants";
 
 export function applyTheme(t: ThemeName) {
   Object.entries(THEMES[t]).forEach(([k, v]) => {

@@ -15,12 +15,12 @@ export default function useEducationData() {
   const apiUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
-    fetch("${apiUrl}/education")
+    fetch(`${apiUrl}/education`)
       .then(res => res.json())
       .then(setTimeline)
       .catch(err => console.error("Education error:", err));
 
-    fetch("${apiUrl}/education/courses")
+    fetch(`${apiUrl}/education/courses`)
       .then(res => res.json())
       .then(setCourses)
       .catch(err => console.error("Courses error:", err));

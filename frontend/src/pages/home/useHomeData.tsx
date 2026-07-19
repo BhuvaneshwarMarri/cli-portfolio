@@ -11,17 +11,17 @@ export default function useHomeData() {
   const apiUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
-    fetch("${apiUrl}/home/interests")
+    fetch(`${apiUrl}/home/interests`)
       .then(res => res.json())
       .then(setInterests)
       .catch(err => console.error("Interests error:", err));
 
-    fetch("${apiUrl}/home/links")
+    fetch(`${apiUrl}/home/links`)
       .then(res => res.json())
       .then(setLinks)
       .catch(err => console.error("Links error:", err));
 
-    fetch("${apiUrl}/home/commands")
+    fetch(`${apiUrl}/home/commands`)
       .then(res => res.json())
       .then(setCommands)
       .catch(err => console.error("Commands error:", err));

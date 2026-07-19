@@ -51,7 +51,7 @@ export default function Projects() {
       });
 
     // Fetch complete profile stats (all repos)
-    fetch("${apiUrl}/projects/profile")
+    fetch(`${apiUrl}/projects/profile`)
       .then(res => res.json())
       .then(data => {
         if (isMounted) {

@@ -56,7 +56,7 @@ export function ProfileCard() {
     let isMounted = true;
     
     // Fetch full GitHub profile with all repos stats, avatar, and contributions
-    fetch("${apiUrl}/projects/profile")
+    fetch(`${apiUrl}/projects/profile`)
       .then(res => res.json())
       .then(data => {
         if (isMounted) {
@@ -67,7 +67,7 @@ export function ProfileCard() {
       .catch(err => console.error("[ProfileCard] profile fetch failed:", err));
     
     // Fetch language breakdown from all repos
-    fetch("${apiUrl}/skills/breakdown")
+    fetch(`${apiUrl}/skills/breakdown`)
       .then(res => res.json())
       .then(data => {
         if (isMounted) {

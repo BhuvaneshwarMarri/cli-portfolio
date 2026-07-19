@@ -35,17 +35,17 @@ export default function useExperienceData() {
   const apiUrl = import.meta.env.VITE_API_URL
 
   useEffect(() => {
-    fetch("${apiUrl}/experience")
+    fetch(`${apiUrl}/experience`)
       .then(res => res.json())
       .then(setJobs)
       .catch(err => console.error("Experience error:", err));
     
-    fetch("${apiUrl}/experience/skills")
+    fetch(`${apiUrl}/experience/skills`)
       .then(res => res.json())
       .then(setSkillMatrix)
       .catch(err => console.error("Experience skills error:", err));
     
-    fetch("${apiUrl}/experience/summary")
+    fetch(`${apiUrl}/experience/summary`)
       .then(res => res.json())
       .then(setSummary)
       .catch(err => console.error("Experience summary error:", err));
